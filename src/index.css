@@ -10,10 +10,10 @@
     scroll-behavior: smooth;
   }
   body {
-    font-family: 'Open Sauce One', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #FAFAF9;
-    color: #1C1917;
+    background-color: #ffffff;
+    color: #000000;
   }
 }

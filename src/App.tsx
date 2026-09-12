@@ -17,7 +17,7 @@ const CATALOGS: CatalogItem[] = [
     coverImage: '/covers/natura-c14.jpg',
     pdfUrl: '/pdf/natura-c14.pdf',
     badge: 'Hasta 40% OFF',
-    badgeColor: 'bg-orange-500 text-white',
+    badgeColor: 'bg-black text-white',
     description:
       'Lanzamiento exclusivo Kaiak 21k, Tododia ciruela y flor de vainilla, Ekos Amazonía Viva y Chronos.',
     tagline: 'hace bien estar bien',
@@ -42,7 +42,7 @@ const CATALOGS: CatalogItem[] = [
     coverImage: '/covers/avon-c14.jpg',
     pdfUrl: '/pdf/avon-c14.pdf',
     badge: 'Mega Ofertas',
-    badgeColor: 'bg-pink-600 text-white',
+    badgeColor: 'bg-black text-white',
     description:
       'Perfumes 300 Km/h Surfer, Max Turbo, Máscara Efecto Abanico y Labiales Power Stay 16 horas.',
     tagline: 'vive al límite',
@@ -66,7 +66,7 @@ const CATALOGS: CatalogItem[] = [
     coverImage: '/covers/casa-estilo-c14.jpg',
     pdfUrl: '/pdf/casa-estilo-c14.pdf',
     badge: 'Hasta 70% OFF',
-    badgeColor: 'bg-blue-600 text-white',
+    badgeColor: 'bg-black text-white',
     description:
       'Outlet imperdible con hasta 70% de descuento en organizadores RPET, posavasos con destapador y cocina.',
     tagline: '¡Los mejores productos a precios únicos!',
@@ -88,7 +88,7 @@ const CATALOGS: CatalogItem[] = [
     coverImage: '/covers/ciclo-14.jpg',
     pdfUrl: '/pdf/ciclo-14.pdf',
     badge: 'Exclusivo Consultoras',
-    badgeColor: 'bg-purple-700 text-white',
+    badgeColor: 'bg-black text-white',
     description:
       'Franjas de puntaje (55 pts Avon / 80 pts Natura), kits promocionales de lanzamiento y herramientas de venta.',
     tagline: 'Gana más según tu nivel de consultoría',
@@ -190,7 +190,7 @@ export default function App() {
         triggerToast('Eliminado de tus favoritos');
         return prev.filter((id) => id !== productId);
       } else {
-        triggerToast('❤️ Guardado en tus favoritos');
+        triggerToast('Guardado en tus favoritos');
         return [...prev, productId];
       }
     });
@@ -402,7 +402,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-100 text-stone-900 selection:bg-orange-200">
+    <div className="min-h-screen flex flex-col bg-[#FAFAFA] text-black selection:bg-neutral-200">
       {/* 0. FULL-SCREEN HERO SECTION LANDING PAGE */}
       <HeroSection
         isScrolled={isScrolledPastHero}
@@ -419,21 +419,21 @@ export default function App() {
 
       <div id="catalogo-store">
         {/* 1. ANNOUNCEMENT BAR */}
-      <div className="bg-stone-950 text-white text-xs py-2 px-4 text-center font-medium flex items-center justify-between sm:justify-center gap-4">
+      <div className="bg-[#F4F4F6] border-b border-black/8 text-black text-xs py-2 px-4 text-center font-medium flex items-center justify-between sm:justify-center gap-4 select-none">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
+          <span className="w-2 h-2 rounded-full bg-black inline-block" />
           <span>🚚 <strong>Envío GRATIS</strong> a todo Chile en compras sobre $35.000</span>
         </div>
-        <div className="hidden md:flex items-center gap-4 text-stone-300">
-          <span>|</span>
-          <span>🎟️ Cupón 10% OFF: <strong className="text-orange-400 bg-stone-900 px-1.5 py-0.5 rounded border border-orange-500/40">CICLO14</strong></span>
-          <span>|</span>
+        <div className="hidden md:flex items-center gap-4 text-black/60">
+          <span>•</span>
+          <span>🎟️ Cupón 10% OFF: <strong className="text-black bg-white px-2 py-0.5 rounded-full border border-black/10 font-mono">CICLO14</strong></span>
+          <span>•</span>
           <span>💳 Webpay Plus • Débito • Crédito • WhatsApp</span>
         </div>
       </div>
 
       {/* 2. NAVBAR */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-black/8 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           {/* Brand Logo */}
           <div
@@ -443,20 +443,25 @@ export default function App() {
             }}
             className="flex items-center gap-3 cursor-pointer select-none"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 via-pink-600 to-purple-600 flex items-center justify-center text-white font-black text-xl shadow-md">
-              C14
+            <div className="w-9 h-9 rounded-full bg-black flex items-center justify-center text-white flex-shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <g transform="rotate(-35 12 12)">
+                  <rect x="5.5" y="3.5" width="4.5" height="17" rx="2.25" fill="#ffffff" />
+                  <rect x="14" y="3.5" width="4.5" height="17" rx="2.25" fill="#ffffff" />
+                </g>
+              </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-black text-xl tracking-tight text-stone-950 leading-none">
-                  BEAUTY & STORE
+                <span className="font-semibold text-sm sm:text-base tracking-tight text-black leading-none">
+                  Natura & Avon
                 </span>
-                <span className="bg-orange-100 text-orange-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-orange-200">
+                <span className="bg-[#F4F4F6] text-black text-[10px] font-medium px-2.5 py-0.5 rounded-full border border-black/8">
                   {PRODUCTS.length} Productos
                 </span>
               </div>
-              <p className="text-[11px] text-stone-500 font-semibold tracking-wide">
-                Natura • Avon • Casa & Estilo Chile
+              <p className="text-[11px] text-black/50 font-normal tracking-wide mt-0.5">
+                Ciclo 14 · 2026 Chile
               </p>
             </div>
           </div>
@@ -468,14 +473,14 @@ export default function App() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar entre más de 680+ productos, códigos (ej: 135849, 114201) o marcas..."
-                className="w-full pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-full text-xs font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all shadow-inner"
+                placeholder="Buscar por código (ej: 135849, 114201), producto o marca..."
+                className="w-full pl-10 pr-4 py-2 bg-[#F4F4F6] border border-black/8 rounded-full text-xs font-medium text-black placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all"
               />
-              <svg className="w-4 h-4 absolute left-3.5 top-2.5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 absolute left-3.5 top-2.5 text-black/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600 text-xs font-bold">
+                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-black/40 hover:text-black text-xs font-bold">
                   ✕
                 </button>
               )}
@@ -490,17 +495,17 @@ export default function App() {
                 setShowOnlyFavorites((prev) => !prev);
                 setActiveTab('store');
               }}
-              className={`p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-2 rounded-full text-xs font-medium border transition-all flex items-center gap-1.5 ${
                 showOnlyFavorites
-                  ? 'bg-rose-50 text-rose-600 border-rose-200 shadow-sm'
-                  : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200'
+                  ? 'bg-black text-white border-black'
+                  : 'bg-white hover:bg-[#F4F4F6] text-black border-black/10'
               }`}
               title="Ver mis favoritos"
             >
-              <span className="text-rose-500">❤️</span>
+              <span>{showOnlyFavorites ? '❤️' : '🤍'}</span>
               <span className="hidden sm:inline">Favoritos</span>
               {favorites.length > 0 && (
-                <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="w-4 h-4 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center">
                   {favorites.length}
                 </span>
               )}
@@ -512,10 +517,10 @@ export default function App() {
                 setActiveTab(activeTab === 'store' ? 'catalogs' : 'store');
                 setShowOnlyFavorites(false);
               }}
-              className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
+              className={`px-3.5 py-2 rounded-full text-xs font-medium border transition-all flex items-center gap-1.5 ${
                 activeTab === 'catalogs'
-                  ? 'bg-stone-900 text-white border-stone-900 shadow-sm'
-                  : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200'
+                  ? 'bg-black text-white border-black'
+                  : 'bg-white hover:bg-[#F4F4F6] text-black border-black/10'
               }`}
             >
               <span>📖</span>
@@ -526,27 +531,25 @@ export default function App() {
             {/* Shopping Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs sm:text-sm shadow-md transition-all hover:scale-105 active:scale-95"
+              className="relative flex items-center gap-2 pl-3.5 pr-2 py-1.5 rounded-full bg-black hover:bg-neutral-900 text-white font-medium text-xs sm:text-sm shadow-sm transition-all hover:scale-105 active:scale-95"
             >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              <span className="hidden sm:inline font-bold">{formatCLP(cartSubtotal)}</span>
-              {totalCartCount > 0 && (
-                <span className="w-5 h-5 rounded-full bg-white text-orange-700 font-black text-xs flex items-center justify-center shadow">
-                  {totalCartCount}
-                </span>
-              )}
+              <span className="hidden sm:inline font-mono">{formatCLP(cartSubtotal)}</span>
+              <span className="w-5 h-5 rounded-full bg-white text-black font-bold text-xs flex items-center justify-center">
+                {totalCartCount}
+              </span>
             </button>
           </div>
         </div>
 
         {/* Quick Product Code Search Strip */}
-        <div className="border-t border-stone-200 bg-orange-50/60 px-4 py-1.5 text-xs">
+        <div className="border-t border-black/8 bg-[#F4F4F6] px-4 py-2 text-xs">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-stone-700 font-semibold">
+            <div className="flex items-center gap-2 text-black/75 font-medium">
               <span>⚡</span>
-              <span><strong>Pedido Rápido por Código:</strong> Inscribe el código de cualquier revista:</span>
+              <span><strong>Pedido Rápido por Código:</strong> Inscribe el código de catálogo para agregarlo:</span>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -554,14 +557,14 @@ export default function App() {
                 value={quickCodeInput}
                 onChange={(e) => setQuickCodeInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleQuickCodeAdd()}
-                placeholder="Ej: 114201"
-                className="px-2.5 py-1 bg-white border border-stone-300 rounded-lg text-xs font-mono w-28 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                placeholder="Ej: 135849"
+                className="px-3 py-1 bg-white border border-black/15 rounded-full text-xs font-mono w-28 text-black focus:outline-none focus:ring-1 focus:ring-black"
               />
               <button
                 onClick={handleQuickCodeAdd}
-                className="px-2.5 py-1 bg-stone-900 hover:bg-orange-600 text-white rounded-lg text-xs font-bold transition-colors"
+                className="px-4 py-1 bg-black hover:bg-neutral-800 text-white rounded-full text-xs font-medium transition-colors"
               >
-                Buscar / Pedir
+                Agregar
               </button>
             </div>
           </div>
@@ -583,10 +586,10 @@ export default function App() {
                     setActiveTab('store');
                     setShowOnlyFavorites(false);
                   }}
-                  className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
                     selectedCategory === cat && activeTab === 'store' && !showOnlyFavorites
-                      ? 'bg-orange-600 text-white shadow-sm'
-                      : 'bg-stone-50 text-stone-600 hover:bg-stone-200/60 border border-stone-200'
+                      ? 'bg-black text-white shadow-sm'
+                      : 'bg-[#F4F4F6] text-black/70 hover:bg-[#EAEAEA] border border-black/8'
                   }`}
                 >
                   <span>{cat}</span>
@@ -594,7 +597,7 @@ export default function App() {
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                       selectedCategory === cat && activeTab === 'store' && !showOnlyFavorites
                         ? 'bg-white/30 text-white'
-                        : 'bg-stone-200 text-stone-600'
+                        : 'bg-stone-200 text-black/60'
                     }`}
                   >
                     {count}
@@ -608,12 +611,12 @@ export default function App() {
 
       {/* 3. TOAST */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-stone-950 text-white px-5 py-3 rounded-2xl shadow-2xl border border-stone-800 flex items-center gap-3 animate-bounce">
-          <span className="text-emerald-400 font-bold">🛒</span>
+        <div className="fixed bottom-6 right-6 z-50 bg-black text-white px-5 py-3 rounded-2xl shadow-2xl border border-neutral-800 flex items-center gap-3 animate-bounce">
+          <span className="text-white font-bold">✓</span>
           <span className="text-xs font-semibold">{toastMessage}</span>
           <button
             onClick={() => setIsCartOpen(true)}
-            className="text-xs font-bold text-orange-400 hover:text-orange-300 underline ml-2"
+            className="text-xs font-medium text-white hover:text-white/80 underline ml-2"
           >
             Ver Carrito
           </button>
@@ -623,43 +626,43 @@ export default function App() {
       {/* 4. CONTENT */}
       {activeTab === 'store' ? (
         <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-          {/* E-Commerce Promotional Hero Banner */}
+          {/* E-Commerce Promotional Minimal Banner */}
           {!showOnlyFavorites && (
-            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-orange-600 via-pink-600 to-purple-800 text-white p-6 sm:p-12 mb-8 shadow-xl">
+            <div className="relative rounded-3xl overflow-hidden bg-black text-white p-6 sm:p-10 mb-8 border border-black/10">
               <div className="max-w-2xl relative z-10">
-                <span className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-black uppercase tracking-wider mb-3">
-                  🔥 Campaña Ciclo 14 / 2026 Chile • Más de 50 Productos Oficiales
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-xs font-medium uppercase tracking-wider mb-4 border border-white/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  Campaña Ciclo 14 / 2026 Chile • 680+ Productos Oficiales
                 </span>
-                <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-[1.1] mb-4">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] mb-4">
                   Gran Tienda Online Natura, Avon y Casa & Estilo
                 </h1>
-                <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-6 font-medium">
+                <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 font-normal">
                   Encuentra todas las fragancias, cremas, maquillaje y productos de hogar extraídos directamente de los catálogos del Ciclo 14 con descuentos de hasta el 70%.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => setSelectedCategory('Kits & Ofertas')}
-                    className="px-5 py-3 rounded-xl bg-white text-stone-900 font-black text-xs sm:text-sm shadow-md hover:bg-stone-100 transition-all hover:scale-105 active:scale-95"
+                    className="px-5 py-2.5 rounded-full bg-white text-black font-medium text-xs sm:text-sm hover:bg-neutral-200 transition-all hover:scale-105 active:scale-95"
                   >
                     Ver Kits & Outlet (-70%)
                   </button>
                   <button
                     onClick={() => setActiveTab('catalogs')}
-                    className="px-5 py-3 rounded-xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-bold text-xs sm:text-sm border border-white/30 transition-all"
+                    className="px-5 py-2.5 rounded-full bg-transparent hover:bg-white/10 text-white font-medium text-xs sm:text-sm border border-white/20 transition-all"
                   >
                     Hojea las 4 Revistas Digitales
                   </button>
                 </div>
               </div>
-              <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-20 pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-300 via-pink-500 to-transparent" />
             </div>
           )}
 
           {/* Filtering & Toolbar */}
-          <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-white rounded-2xl p-4 border border-black/8 shadow-xs mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Brand Filter Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto">
-              <span className="text-xs font-bold text-stone-400 mr-2 uppercase tracking-wider hidden lg:inline">
+              <span className="text-xs font-medium text-black/40 mr-2 uppercase tracking-wider hidden lg:inline">
                 Marca:
               </span>
               {BRANDS.map((brand) => {
@@ -671,14 +674,14 @@ export default function App() {
                   <button
                     key={brand}
                     onClick={() => setSelectedBrand(brand)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
                       selectedBrand === brand
-                        ? 'bg-stone-950 text-white'
-                        : 'bg-stone-100 hover:bg-stone-200/70 text-stone-700'
+                        ? 'bg-black text-white'
+                        : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/70 border border-black/8'
                     }`}
                   >
                     <span>{brand}</span>
-                    <span className="text-[10px] opacity-70">({count})</span>
+                    <span className="text-[10px] opacity-60">({count})</span>
                   </button>
                 );
               })}
@@ -687,12 +690,12 @@ export default function App() {
             {/* Price Filter & Sort */}
             <div className="flex items-center justify-between w-full md:w-auto gap-3 text-xs">
               {/* Price range */}
-              <div className="flex items-center gap-1">
-                <span className="text-stone-400 font-semibold">Precio:</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-black/50 font-medium">Precio:</span>
                 <select
                   value={priceFilter}
                   onChange={(e) => setPriceFilter(e.target.value as any)}
-                  className="bg-stone-100 border border-stone-200 rounded-xl px-2 py-1.5 font-bold text-stone-700 focus:outline-none"
+                  className="bg-[#F4F4F6] border border-black/10 rounded-full px-3 py-1.5 font-medium text-black focus:outline-none focus:ring-1 focus:ring-black"
                 >
                   <option value="all">Todos los precios</option>
                   <option value="under10k">Menos de $10.000</option>
@@ -702,12 +705,12 @@ export default function App() {
               </div>
 
               {/* Sort by */}
-              <div className="flex items-center gap-1">
-                <span className="text-stone-400 font-semibold">Ordenar:</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-black/50 font-medium">Ordenar:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-stone-100 border border-stone-200 rounded-xl px-2.5 py-1.5 font-bold text-stone-700 focus:outline-none"
+                  className="bg-[#F4F4F6] border border-black/10 rounded-full px-3 py-1.5 font-medium text-black focus:outline-none focus:ring-1 focus:ring-black"
                 >
                   <option value="featured">Destacados</option>
                   <option value="discount">Mayor Descuento</option>
@@ -720,14 +723,14 @@ export default function App() {
 
           {/* Favorites Banner if active */}
           {showOnlyFavorites && (
-            <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-6 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-rose-800 text-sm font-bold">
-                <span>❤️</span>
+            <div className="bg-[#F4F4F6] border border-black/8 rounded-2xl p-4 mb-6 flex items-center justify-between text-black">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <span>★</span>
                 <span>Mostrando tus {favorites.length} productos favoritos guardados</span>
               </div>
               <button
                 onClick={() => setShowOnlyFavorites(false)}
-                className="text-xs font-bold text-rose-600 hover:text-rose-800 underline"
+                className="text-xs font-medium text-black hover:text-black/60 underline"
               >
                 Ver todos los productos
               </button>
@@ -736,10 +739,10 @@ export default function App() {
 
           {/* Product Grid */}
           {filteredProducts.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-stone-200">
+            <div className="bg-white rounded-3xl p-12 text-center border border-black/10">
               <div className="text-4xl mb-3">🔍</div>
               <h3 className="font-extrabold text-lg text-stone-800">No encontramos productos con estos filtros</h3>
-              <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1 mb-5">
+              <p className="text-xs text-black/50 max-w-sm mx-auto mt-1 mb-5">
                 Prueba buscando con otro término, limpiando el rango de precios o explorando otra categoría.
               </p>
               <button
@@ -750,7 +753,7 @@ export default function App() {
                   setPriceFilter('all');
                   setShowOnlyFavorites(false);
                 }}
-                className="px-4 py-2 rounded-xl bg-orange-600 text-white font-bold text-xs shadow"
+                className="px-5 py-2.5 rounded-full bg-black text-white font-medium text-xs hover:bg-neutral-800 transition-colors"
               >
                 Restablecer Filtros
               </button>
@@ -764,22 +767,24 @@ export default function App() {
                   return (
                     <div
                       key={product.id}
-                      className="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 relative"
+                      className="group bg-white rounded-2xl border border-black/8 overflow-hidden hover:border-black/25 hover:shadow-sm transition-all duration-300 flex flex-col justify-between hover:-translate-y-0.5 relative"
                     >
                       {/* Favorite Button */}
                       <button
                         onClick={(e) => toggleFavorite(product.id, e)}
-                        className={`absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-md transition-transform hover:scale-110 ${
-                          isFav ? 'bg-rose-50 text-rose-600' : 'bg-white/80 hover:bg-white text-stone-400'
+                        className={`absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-transform hover:scale-105 border ${
+                          isFav
+                            ? 'bg-black text-white border-black'
+                            : 'bg-white/90 hover:bg-white text-black/40 border-black/10'
                         }`}
                         title={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
                       >
-                        {isFav ? '❤️' : '🤍'}
+                        <span className="text-xs">{isFav ? '★' : '☆'}</span>
                       </button>
 
                       {/* Image Box */}
                       <div
-                        className="relative aspect-square bg-stone-50 overflow-hidden cursor-pointer"
+                        className="relative aspect-square bg-[#F4F4F6] overflow-hidden cursor-pointer"
                         onClick={() => setQuickViewProduct(product)}
                       >
                         <img
@@ -792,12 +797,12 @@ export default function App() {
                         {/* Badges */}
                         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 pointer-events-none">
                           {product.discountPercent > 0 && (
-                            <span className="px-2 py-0.5 rounded-md bg-red-600 text-white text-[11px] font-black shadow">
+                            <span className="px-2 py-0.5 rounded-full bg-black text-white text-[10px] font-medium shadow-xs">
                               -{product.discountPercent}%
                             </span>
                           )}
                           {product.badge && (
-                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold shadow ${product.badgeColor || 'bg-stone-900 text-white'}`}>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-900 text-white shadow-xs">
                               {product.badge}
                             </span>
                           )}
@@ -805,7 +810,7 @@ export default function App() {
 
                         {/* Brand Tag */}
                         <div className="absolute bottom-2 left-2 pointer-events-none">
-                          <span className="px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm text-[10px] font-extrabold uppercase tracking-wider text-stone-800 shadow-sm">
+                          <span className="px-2.5 py-0.5 rounded-full bg-white/95 text-[10px] font-medium uppercase tracking-wider text-black border border-black/8 shadow-xs">
                             {product.brand}
                           </span>
                         </div>
@@ -815,30 +820,30 @@ export default function App() {
                       <div className="p-4 flex-1 flex flex-col justify-between">
                         <div>
                           {/* Rating & Code */}
-                          <div className="flex items-center justify-between text-[11px] text-stone-400 mb-1">
-                            <div className="flex items-center text-amber-500 font-bold">
+                          <div className="flex items-center justify-between text-[11px] text-black/40 mb-1">
+                            <div className="flex items-center text-black font-medium">
                               <span>★</span>
-                              <span className="text-stone-700 ml-1">{product.rating}</span>
-                              <span className="text-stone-400 ml-0.5">({product.reviewsCount})</span>
+                              <span className="text-black ml-1">{product.rating}</span>
+                              <span className="text-black/40 ml-0.5">({product.reviewsCount})</span>
                             </div>
-                            <span className="font-mono text-stone-500">Cód: {product.code}</span>
+                            <span className="font-mono text-black/50">Cód: {product.code}</span>
                           </div>
 
                           {/* Title */}
                           <h3
                             onClick={() => setQuickViewProduct(product)}
-                            className="font-bold text-sm text-stone-900 line-clamp-2 leading-snug group-hover:text-orange-600 transition-colors cursor-pointer mb-2"
+                            className="font-medium text-sm text-black line-clamp-2 leading-snug group-hover:text-black/70 transition-colors cursor-pointer mb-2"
                           >
                             {product.name}
                           </h3>
 
                           {/* Prices */}
                           <div className="flex items-baseline gap-2 mb-3">
-                            <span className="font-black text-base sm:text-lg text-stone-950">
+                            <span className="font-semibold text-base sm:text-lg text-black">
                               {formatCLP(product.price)}
                             </span>
                             {product.originalPrice > product.price && (
-                              <span className="text-xs text-stone-400 line-through">
+                              <span className="text-xs text-black/40 line-through">
                                 {formatCLP(product.originalPrice)}
                               </span>
                             )}
@@ -850,7 +855,7 @@ export default function App() {
                           {matchedCatalog && (
                             <button
                               onClick={() => handleOpenCatalog(matchedCatalog, product.page)}
-                              className="w-full text-left text-[11px] text-orange-600 hover:text-orange-700 font-semibold mb-3 flex items-center justify-between py-1 px-2 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors"
+                              className="w-full text-left text-[11px] text-black/60 hover:text-black font-medium mb-3 flex items-center justify-between py-1.5 px-2.5 rounded-full bg-[#F4F4F6] hover:bg-[#EAEAEA] transition-colors"
                             >
                               <span>📖 Ver en Revista (Pág. {product.page})</span>
                               <span>→</span>
@@ -860,9 +865,9 @@ export default function App() {
                           {/* Add button */}
                           <button
                             onClick={(e) => handleAddToCart(product, 1, e)}
-                            className="w-full py-2.5 px-3 rounded-xl bg-stone-950 hover:bg-orange-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm active:scale-95"
+                            className="w-full py-2.5 px-3 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-95"
                           >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
                             <span>Agregar al Carrito</span>
@@ -879,7 +884,7 @@ export default function App() {
                 <div className="text-center mt-10">
                   <button
                     onClick={() => setVisibleCount((prev) => prev + 16)}
-                    className="px-6 py-3 rounded-2xl bg-white border border-stone-300 hover:bg-stone-50 text-stone-800 font-extrabold text-sm shadow-sm transition-all hover:scale-105"
+                    className="px-6 py-2.5 rounded-full bg-white border border-black/15 hover:bg-[#F4F4F6] text-black font-medium text-xs shadow-xs transition-all hover:scale-105"
                   >
                     Cargar más productos ({filteredProducts.length - visibleCount} restantes)
                   </button>
@@ -893,19 +898,19 @@ export default function App() {
         <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <span className="text-xs font-bold text-orange-600 uppercase tracking-widest">
+              <span className="text-xs font-bold text-black font-semibold uppercase tracking-widest">
                 Catálogos Digitales Oficiales
               </span>
-              <h2 className="text-3xl font-black text-stone-900 tracking-tight mt-0.5">
+              <h2 className="text-3xl font-black text-black tracking-tight mt-0.5">
                 Revistas Interactivas Ciclo 14 / 2026 Chile
               </h2>
-              <p className="text-sm text-stone-500 mt-1">
+              <p className="text-sm text-black/50 mt-1">
                 Hojea todas las páginas en alta definición. Haz clic en cualquier portada para abrir el visor interactivo.
               </p>
             </div>
             <button
               onClick={() => setActiveTab('store')}
-              className="px-4 py-2 rounded-xl bg-stone-950 text-white text-xs font-bold hover:bg-orange-600 transition-colors shadow"
+              className="px-4 py-2 rounded-full bg-black text-white text-xs font-medium hover:bg-neutral-800 transition-colors shadow-xs"
             >
               Volver a la Tienda
             </button>
@@ -915,11 +920,11 @@ export default function App() {
             {CATALOGS.map((catalog) => (
               <div
                 key={catalog.id}
-                className="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                className="group bg-white rounded-2xl border border-black/10 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               >
                 <div
                   onClick={() => handleOpenCatalog(catalog, 1)}
-                  className="relative aspect-[3/4] bg-stone-100 cursor-pointer overflow-hidden"
+                  className="relative aspect-[3/4] bg-[#FAFAFA] cursor-pointer overflow-hidden"
                 >
                   <img
                     src={catalog.coverImage}
@@ -935,7 +940,7 @@ export default function App() {
                     </span>
                   </div>
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
-                    <span className="px-4 py-2 rounded-full bg-white text-stone-900 font-bold text-xs shadow-lg">
+                    <span className="px-4 py-2 rounded-full bg-white text-black font-bold text-xs shadow-lg">
                       Abrir Revista
                     </span>
                   </div>
@@ -943,16 +948,16 @@ export default function App() {
 
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-orange-600 block mb-1">
+                    <span className="text-xs font-bold uppercase tracking-wider text-black font-semibold block mb-1">
                       {catalog.brand} • {catalog.campaign}
                     </span>
                     <h3
                       onClick={() => handleOpenCatalog(catalog, 1)}
-                      className="font-bold text-lg text-stone-900 hover:text-orange-600 transition-colors cursor-pointer leading-snug mb-1"
+                      className="font-bold text-lg text-black hover:text-black font-semibold transition-colors cursor-pointer leading-snug mb-1"
                     >
                       {catalog.title}
                     </h3>
-                    <p className="text-xs text-stone-500 line-clamp-2 leading-relaxed mb-4">
+                    <p className="text-xs text-black/50 line-clamp-2 leading-relaxed mb-4">
                       {catalog.description}
                     </p>
                   </div>
@@ -961,14 +966,14 @@ export default function App() {
                     <div className="flex items-center gap-2 pt-3 border-t border-stone-100">
                       <button
                         onClick={() => handleOpenCatalog(catalog, 1)}
-                        className="flex-1 py-2.5 px-3 rounded-xl bg-stone-900 hover:bg-orange-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                        className="flex-1 py-2.5 px-3 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
                       >
                         Ver Revista
                       </button>
                       <a
                         href={catalog.pdfUrl}
                         download
-                        className="p-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-600 transition-colors"
+                        className="p-2.5 rounded-full border border-black/10 hover:bg-[#F4F4F6] text-black/60 transition-colors"
                         title="Descargar PDF"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -987,23 +992,23 @@ export default function App() {
       {/* 6. QUICK VIEW MODAL */}
       {quickViewProduct && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 animate-scale-in relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-black/10 animate-scale-in relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setQuickViewProduct(null)}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#FAFAFA] text-black/40 hover:text-black/80 transition-colors"
             >
               ✕
             </button>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-              <div className="aspect-square bg-stone-50 rounded-2xl overflow-hidden border border-stone-200 relative">
+              <div className="aspect-square bg-[#F4F4F6] rounded-2xl overflow-hidden border border-black/10 relative">
                 <img
                   src={quickViewProduct.image}
                   alt={quickViewProduct.name}
                   className="w-full h-full object-cover"
                 />
                 {quickViewProduct.discountPercent > 0 && (
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-red-600 text-white text-xs font-black shadow">
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black text-white text-xs font-medium shadow-xs">
                     -{quickViewProduct.discountPercent}% OFF
                   </span>
                 )}
@@ -1011,47 +1016,47 @@ export default function App() {
 
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-orange-600">
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-black font-semibold">
                     {quickViewProduct.brand}
                   </span>
-                  <span className="text-stone-300">•</span>
-                  <span className="text-xs text-stone-500 font-mono">
+                  <span className="text-white/80">•</span>
+                  <span className="text-xs text-black/50 font-mono">
                     Cód: {quickViewProduct.code}
                   </span>
                 </div>
 
-                <h2 className="text-xl sm:text-2xl font-black text-stone-900 leading-snug mb-2">
+                <h2 className="text-xl sm:text-2xl font-black text-black leading-snug mb-2">
                   {quickViewProduct.name}
                 </h2>
 
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="flex items-center text-amber-500 font-bold text-sm">
+                  <div className="flex items-center text-black font-medium text-sm">
                     <span>★ {quickViewProduct.rating}</span>
                   </div>
-                  <span className="text-xs text-stone-400">
+                  <span className="text-xs text-black/40">
                     ({quickViewProduct.reviewsCount} opiniones)
                   </span>
                 </div>
 
                 <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-2xl sm:text-3xl font-black text-stone-950">
+                  <span className="text-2xl sm:text-3xl font-black text-black">
                     {formatCLP(quickViewProduct.price)}
                   </span>
                   {quickViewProduct.originalPrice > quickViewProduct.price && (
-                    <span className="text-sm text-stone-400 line-through">
+                    <span className="text-sm text-black/40 line-through">
                       {formatCLP(quickViewProduct.originalPrice)}
                     </span>
                   )}
                 </div>
 
-                <p className="text-xs text-stone-600 leading-relaxed mb-4">
+                <p className="text-xs text-black/60 leading-relaxed mb-4">
                   {quickViewProduct.description}
                 </p>
 
                 <div className="space-y-1.5 mb-6">
                   {quickViewProduct.benefits.map((b, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-stone-700">
-                      <span className="text-emerald-500 font-bold">✓</span>
+                    <div key={i} className="flex items-center gap-2 text-xs text-black/80">
+                      <span className="text-black font-semibold">✓</span>
                       <span>{b}</span>
                     </div>
                   ))}
@@ -1064,7 +1069,7 @@ export default function App() {
                       setQuickViewProduct(null);
                       setIsCartOpen(true);
                     }}
-                    className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="w-full py-3 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
                     Agregar al Carrito
                   </button>
@@ -1077,7 +1082,7 @@ export default function App() {
                         handleOpenCatalog(matched, quickViewProduct.page);
                       }
                     }}
-                    className="w-full py-2 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-700 font-bold text-xs transition-colors"
+                    className="w-full py-2.5 rounded-full border border-black/15 hover:bg-[#F4F4F6] text-black font-medium text-xs transition-colors"
                   >
                     📖 Abrir página en Revista (Pág. {quickViewProduct.page})
                   </button>
@@ -1092,42 +1097,42 @@ export default function App() {
       {isCartOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white w-full max-w-md h-full flex flex-col shadow-2xl animate-slide-left">
-            <div className="p-4 sm:p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+            <div className="p-4 sm:p-5 border-b border-black/10 flex items-center justify-between bg-[#F4F4F6]">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🛍️</span>
                 <div>
-                  <h3 className="font-extrabold text-stone-900 text-base leading-none">
+                  <h3 className="font-extrabold text-black text-base leading-none">
                     Mi Carrito de Compras
                   </h3>
-                  <span className="text-xs text-stone-500">
+                  <span className="text-xs text-black/50">
                     {totalCartCount} {totalCartCount === 1 ? 'producto' : 'productos'}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="p-1.5 rounded-lg text-stone-400 hover:text-stone-600 hover:bg-stone-200/60 transition-colors"
+                className="p-1.5 rounded-lg text-black/40 hover:text-black/60 hover:bg-stone-200/60 transition-colors"
               >
                 ✕
               </button>
             </div>
 
             {/* Free shipping bar */}
-            <div className="bg-orange-50 border-b border-orange-100 p-3 text-xs">
+            <div className="bg-[#F4F4F6] border-b border-black/8 p-3 text-xs">
               {isFreeShipping ? (
-                <div className="text-emerald-700 font-bold flex items-center gap-1.5">
+                <div className="text-black font-semibold flex items-center gap-1.5">
                   <span>🎉</span>
                   <span>¡Felicidades! Tienes Envío Gratis a todo Chile</span>
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-center justify-between font-semibold text-stone-700 mb-1">
+                  <div className="flex items-center justify-between font-semibold text-black/80 mb-1">
                     <span>Agrega {formatCLP(freeShippingThreshold - cartSubtotal)} más para <strong>Envío Gratis</strong></span>
                     <span>{Math.round((cartSubtotal / freeShippingThreshold) * 100)}%</span>
                   </div>
-                  <div className="w-full bg-orange-200 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-black/10 h-1.5 rounded-full overflow-hidden">
                     <div
-                      className="bg-orange-600 h-full rounded-full transition-all duration-300"
+                      className="bg-black h-full rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(100, (cartSubtotal / freeShippingThreshold) * 100)}%` }}
                     />
                   </div>
@@ -1141,12 +1146,12 @@ export default function App() {
                 <div className="py-16 text-center">
                   <div className="text-5xl mb-3">🛒</div>
                   <h4 className="font-extrabold text-stone-800 text-base">Tu carrito está vacío</h4>
-                  <p className="text-xs text-stone-500 max-w-xs mx-auto mt-1 mb-5">
+                  <p className="text-xs text-black/50 max-w-xs mx-auto mt-1 mb-5">
                     Explora nuestra tienda o revistas digitales para encontrar los mejores productos y ofertas del Ciclo 14.
                   </p>
                   <button
                     onClick={() => setIsCartOpen(false)}
-                    className="px-5 py-2.5 rounded-xl bg-orange-600 text-white font-bold text-xs shadow hover:bg-orange-700"
+                    className="px-5 py-2.5 rounded-full bg-black text-white font-medium text-xs shadow-xs hover:bg-neutral-800"
                   >
                     Empezar a Comprar
                   </button>
@@ -1155,45 +1160,45 @@ export default function App() {
                 cart.map((item) => (
                   <div
                     key={item.product.id}
-                    className="flex items-center gap-3 p-3 bg-stone-50 rounded-2xl border border-stone-200"
+                    className="flex items-center gap-3 p-3 bg-[#F4F4F6] rounded-2xl border border-black/10"
                   >
                     <img
                       src={item.product.image}
                       alt={item.product.name}
-                      className="w-16 h-16 rounded-xl object-cover border border-stone-200 bg-white flex-shrink-0"
+                      className="w-16 h-16 rounded-xl object-cover border border-black/10 bg-white flex-shrink-0"
                     />
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-[10px] font-bold text-orange-600 uppercase">
+                        <span className="text-[10px] font-bold text-black font-semibold uppercase">
                           {item.product.brand}
                         </span>
-                        <span className="text-[10px] text-stone-400 font-mono">
+                        <span className="text-[10px] text-black/40 font-mono">
                           #{item.product.code}
                         </span>
                       </div>
 
-                      <h4 className="font-bold text-xs text-stone-900 truncate">
+                      <h4 className="font-bold text-xs text-black truncate">
                         {item.product.name}
                       </h4>
 
-                      <div className="font-extrabold text-xs text-stone-950 mt-1">
+                      <div className="font-extrabold text-xs text-black mt-1">
                         {formatCLP(item.product.price * item.quantity)}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1.5">
-                      <div className="flex items-center border border-stone-300 rounded-lg bg-white overflow-hidden text-xs">
+                      <div className="flex items-center border border-black/15 rounded-lg bg-white overflow-hidden text-xs">
                         <button
                           onClick={() => handleUpdateQuantity(item.product.id, -1)}
-                          className="px-2 py-1 hover:bg-stone-100 text-stone-600 font-bold"
+                          className="px-2 py-1 hover:bg-[#FAFAFA] text-black/60 font-bold"
                         >
                           −
                         </button>
-                        <span className="px-2 font-bold text-stone-900">{item.quantity}</span>
+                        <span className="px-2 font-bold text-black">{item.quantity}</span>
                         <button
                           onClick={() => handleUpdateQuantity(item.product.id, 1)}
-                          className="px-2 py-1 hover:bg-stone-100 text-stone-600 font-bold"
+                          className="px-2 py-1 hover:bg-[#FAFAFA] text-black/60 font-bold"
                         >
                           +
                         </button>
@@ -1201,7 +1206,7 @@ export default function App() {
 
                       <button
                         onClick={() => handleRemoveFromCart(item.product.id)}
-                        className="p-1 text-stone-400 hover:text-red-600 transition-colors"
+                        className="p-1 text-black/40 hover:text-red-600 transition-colors"
                         title="Eliminar producto"
                       >
                         🗑️
@@ -1214,46 +1219,46 @@ export default function App() {
 
             {/* Footer */}
             {cart.length > 0 && (
-              <div className="p-4 sm:p-5 border-t border-stone-200 bg-stone-50 space-y-3">
+              <div className="p-4 sm:p-5 border-t border-black/10 bg-[#F4F4F6] space-y-3">
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     placeholder="Cupón (ej: CICLO14)"
-                    className="flex-1 px-3 py-1.5 bg-white border border-stone-300 rounded-xl text-xs font-mono uppercase focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-3.5 py-1.5 bg-white border border-black/15 rounded-full text-xs font-mono uppercase focus:outline-none focus:ring-1 focus:ring-black"
                   />
                   <button
                     onClick={handleApplyCoupon}
-                    className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold"
+                    className="px-4 py-1.5 bg-black hover:bg-neutral-800 text-white rounded-full text-xs font-medium"
                   >
                     Aplicar
                   </button>
                 </div>
 
                 {couponError && <p className="text-[11px] text-red-600 font-medium">{couponError}</p>}
-                {couponSuccess && <p className="text-[11px] text-emerald-600 font-bold">{couponSuccess}</p>}
+                {couponSuccess && <p className="text-[11px] text-black font-semibold">{couponSuccess}</p>}
 
-                <div className="space-y-1.5 text-xs text-stone-600 pt-2 border-t border-stone-200">
+                <div className="space-y-1.5 text-xs text-black/60 pt-2 border-t border-black/10">
                   <div className="flex justify-between">
                     <span>Subtotal:</span>
-                    <span className="font-semibold text-stone-900">{formatCLP(cartSubtotal)}</span>
+                    <span className="font-semibold text-black">{formatCLP(cartSubtotal)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-emerald-600 font-bold">
+                    <div className="flex justify-between text-black font-semibold">
                       <span>Descuento cupón:</span>
                       <span>-{formatCLP(discountAmount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span>Despacho:</span>
-                    <span className="font-semibold text-stone-900">
+                    <span className="font-semibold text-black">
                       {isFreeShipping ? 'GRATIS' : formatCLP(shippingFee)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm font-black text-stone-950 pt-1 border-t border-stone-200">
+                  <div className="flex justify-between text-sm font-black text-black pt-1 border-t border-black/10">
                     <span>Total a Pagar:</span>
-                    <span className="text-base text-orange-600">{formatCLP(finalTotal)}</span>
+                    <span className="text-base text-black font-semibold">{formatCLP(finalTotal)}</span>
                   </div>
                 </div>
 
@@ -1262,7 +1267,7 @@ export default function App() {
                     setIsCartOpen(false);
                     setIsCheckoutOpen(true);
                   }}
-                  className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Continuar a Pagar</span>
                   <span>→</span>
@@ -1276,13 +1281,13 @@ export default function App() {
       {/* 8. CHECKOUT MODAL */}
       {isCheckoutOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 animate-scale-in relative max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-stone-200 pb-4 mb-5">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-black/10 animate-scale-in relative max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-black/10 pb-4 mb-5">
               <div>
-                <span className="text-xs font-bold text-orange-600 uppercase tracking-widest">
+                <span className="text-xs font-bold text-black font-semibold uppercase tracking-widest">
                   Paso {checkoutStep} de 3
                 </span>
-                <h3 className="text-xl font-black text-stone-900">
+                <h3 className="text-xl font-black text-black">
                   {checkoutStep === 1 && 'Datos de Contacto'}
                   {checkoutStep === 2 && 'Dirección y Tipo de Entrega'}
                   {checkoutStep === 3 && 'Método de Pago y Confirmación'}
@@ -1290,23 +1295,23 @@ export default function App() {
               </div>
               <button
                 onClick={() => setIsCheckoutOpen(false)}
-                className="text-stone-400 hover:text-stone-600 text-lg font-bold"
+                className="text-black/40 hover:text-black/60 text-lg font-bold"
               >
                 ✕
               </button>
             </div>
 
             <div className="flex items-center gap-2 mb-6">
-              <div className={`flex-1 h-1.5 rounded-full ${checkoutStep >= 1 ? 'bg-orange-600' : 'bg-stone-200'}`} />
-              <div className={`flex-1 h-1.5 rounded-full ${checkoutStep >= 2 ? 'bg-orange-600' : 'bg-stone-200'}`} />
-              <div className={`flex-1 h-1.5 rounded-full ${checkoutStep >= 3 ? 'bg-orange-600' : 'bg-stone-200'}`} />
+              <div className={`flex-1 h-1.5 rounded-full ${checkoutStep >= 1 ? 'bg-black' : 'bg-stone-200'}`} />
+              <div className={`flex-1 h-1.5 rounded-full ${checkoutStep >= 2 ? 'bg-black' : 'bg-stone-200'}`} />
+              <div className={`flex-1 h-1.5 rounded-full ${checkoutStep >= 3 ? 'bg-black' : 'bg-stone-200'}`} />
             </div>
 
             {/* Step 1 */}
             {checkoutStep === 1 && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-black/80 uppercase tracking-wider mb-1">
                     Nombre Completo *
                   </label>
                   <input
@@ -1314,13 +1319,13 @@ export default function App() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Ej: Carolina Rojas Valenzuela"
-                    className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3.5 py-2.5 border border-black/15 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-bold text-black/80 uppercase tracking-wider mb-1">
                       RUT / DNI *
                     </label>
                     <input
@@ -1328,11 +1333,11 @@ export default function App() {
                       value={customerRut}
                       onChange={(e) => setCustomerRut(e.target.value)}
                       placeholder="12.345.678-9"
-                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-3.5 py-2.5 border border-black/15 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-bold text-black/80 uppercase tracking-wider mb-1">
                       Teléfono WhatsApp *
                     </label>
                     <input
@@ -1340,13 +1345,13 @@ export default function App() {
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       placeholder="+56912345678"
-                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-3.5 py-2.5 border border-black/15 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-black/80 uppercase tracking-wider mb-1">
                     Correo Electrónico (para boleta y seguimiento) *
                   </label>
                   <input
@@ -1354,14 +1359,14 @@ export default function App() {
                     value={customerEmail}
                     onChange={(e) => setCustomerEmail(e.target.value)}
                     placeholder="carolina.rojas@gmail.com"
-                    className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3.5 py-2.5 border border-black/15 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
 
                 <button
                   onClick={() => setCheckoutStep(2)}
                   disabled={!customerName.trim() || !customerPhone.trim()}
-                  className="w-full mt-4 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-black text-sm transition-all"
+                  className="w-full mt-4 py-3 rounded-full bg-black hover:bg-neutral-800 disabled:opacity-50 text-white font-medium text-sm transition-all"
                 >
                   Continuar a Entrega →
                 </button>
@@ -1376,12 +1381,12 @@ export default function App() {
                     onClick={() => setShippingType('delivery')}
                     className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
                       shippingType === 'delivery'
-                        ? 'border-orange-600 bg-orange-50/50'
-                        : 'border-stone-200 hover:bg-stone-50'
+                        ? 'border-black bg-[#F4F4F6]'
+                        : 'border-black/10 hover:bg-[#F4F4F6]'
                     }`}
                   >
-                    <div className="font-extrabold text-sm text-stone-900">🚚 Despacho a Domicilio</div>
-                    <div className="text-xs text-stone-500 mt-1">
+                    <div className="font-extrabold text-sm text-black">🚚 Despacho a Domicilio</div>
+                    <div className="text-xs text-black/50 mt-1">
                       {isFreeShipping ? 'Envío Gratis' : '$3.990 en todo Chile'}
                     </div>
                   </div>
@@ -1390,24 +1395,24 @@ export default function App() {
                     onClick={() => setShippingType('pickup')}
                     className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
                       shippingType === 'pickup'
-                        ? 'border-orange-600 bg-orange-50/50'
-                        : 'border-stone-200 hover:bg-stone-50'
+                        ? 'border-black bg-[#F4F4F6]'
+                        : 'border-black/10 hover:bg-[#F4F4F6]'
                     }`}
                   >
-                    <div className="font-extrabold text-sm text-stone-900">🤝 Retiro Consultora</div>
-                    <div className="text-xs text-stone-500 mt-1">Gratis coordinado</div>
+                    <div className="font-extrabold text-sm text-black">🤝 Retiro Consultora</div>
+                    <div className="text-xs text-black/50 mt-1">Gratis coordinado</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-bold text-black/80 uppercase tracking-wider mb-1">
                       Región
                     </label>
                     <select
                       value={shippingRegion}
                       onChange={(e) => setShippingRegion(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-3 py-2.5 border border-black/15 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
                     >
                       <option>Región Metropolitana</option>
                       <option>Valparaíso</option>
@@ -1421,7 +1426,7 @@ export default function App() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-bold text-black/80 uppercase tracking-wider mb-1">
                       Comuna / Ciudad
                     </label>
                     <input
@@ -1429,13 +1434,13 @@ export default function App() {
                       value={shippingCommune}
                       onChange={(e) => setShippingCommune(e.target.value)}
                       placeholder="Ej: Providencia, Las Condes, Viña..."
-                      className="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-3 py-2.5 border border-black/15 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-black/80 uppercase tracking-wider mb-1">
                     Dirección, Número y Depto *
                   </label>
                   <input
@@ -1443,21 +1448,21 @@ export default function App() {
                     value={shippingAddress}
                     onChange={(e) => setShippingAddress(e.target.value)}
                     placeholder="Ej: Av. Providencia 1234, Depto 402"
-                    className="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3 py-2.5 border border-black/15 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
 
                 <div className="flex items-center gap-3 pt-2">
                   <button
                     onClick={() => setCheckoutStep(1)}
-                    className="w-1/3 py-3 rounded-xl border border-stone-200 font-bold text-xs text-stone-700 hover:bg-stone-50"
+                    className="w-1/3 py-3 rounded-full border border-black/15 font-medium text-xs text-black hover:bg-[#F4F4F6]"
                   >
                     ← Volver
                   </button>
                   <button
                     onClick={() => setCheckoutStep(3)}
                     disabled={shippingType === 'delivery' && !shippingAddress.trim()}
-                    className="flex-1 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-black text-sm"
+                    className="flex-1 py-3 rounded-full bg-black hover:bg-neutral-800 disabled:opacity-50 text-white font-medium text-sm"
                   >
                     Continuar al Pago →
                   </button>
@@ -1473,15 +1478,15 @@ export default function App() {
                     onClick={() => setPaymentMethod('webpay')}
                     className={`p-3.5 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${
                       paymentMethod === 'webpay'
-                        ? 'border-orange-600 bg-orange-50/50'
-                        : 'border-stone-200 hover:bg-stone-50'
+                        ? 'border-black bg-[#F4F4F6]'
+                        : 'border-black/10 hover:bg-[#F4F4F6]'
                     }`}
                   >
                     <div>
-                      <div className="font-extrabold text-sm text-stone-900">💳 Webpay Plus (Transbank)</div>
-                      <div className="text-xs text-stone-500">Tarjetas de Débito, Crédito y Redcompra</div>
+                      <div className="font-extrabold text-sm text-black">💳 Webpay Plus (Transbank)</div>
+                      <div className="text-xs text-black/50">Tarjetas de Débito, Crédito y Redcompra</div>
                     </div>
-                    <span className="text-xs font-bold text-orange-600 bg-white px-2 py-1 rounded border border-orange-200">
+                    <span className="text-xs font-bold text-black font-semibold bg-white px-2 py-1 rounded border border-black/10">
                       Recomendado
                     </span>
                   </div>
@@ -1490,13 +1495,13 @@ export default function App() {
                     onClick={() => setPaymentMethod('transfer')}
                     className={`p-3.5 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${
                       paymentMethod === 'transfer'
-                        ? 'border-orange-600 bg-orange-50/50'
-                        : 'border-stone-200 hover:bg-stone-50'
+                        ? 'border-black bg-[#F4F4F6]'
+                        : 'border-black/10 hover:bg-[#F4F4F6]'
                     }`}
                   >
                     <div>
-                      <div className="font-extrabold text-sm text-stone-900">🏦 Transferencia Bancaria Directa</div>
-                      <div className="text-xs text-stone-500">Banco Santander / Estado - Datos automáticos</div>
+                      <div className="font-extrabold text-sm text-black">🏦 Transferencia Bancaria Directa</div>
+                      <div className="text-xs text-black/50">Banco Santander / Estado - Datos automáticos</div>
                     </div>
                   </div>
 
@@ -1504,50 +1509,50 @@ export default function App() {
                     onClick={() => setPaymentMethod('whatsapp')}
                     className={`p-3.5 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${
                       paymentMethod === 'whatsapp'
-                        ? 'border-orange-600 bg-orange-50/50'
-                        : 'border-stone-200 hover:bg-stone-50'
+                        ? 'border-black bg-[#F4F4F6]'
+                        : 'border-black/10 hover:bg-[#F4F4F6]'
                     }`}
                   >
                     <div>
-                      <div className="font-extrabold text-sm text-stone-900">💬 Coordinar y Pagar por WhatsApp</div>
-                      <div className="text-xs text-stone-500">Envía el pedido directamente a tu consultora</div>
+                      <div className="font-extrabold text-sm text-black">💬 Coordinar y Pagar por WhatsApp</div>
+                      <div className="text-xs text-black/50">Envía el pedido directamente a tu consultora</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-1.5 text-xs text-stone-600">
+                <div className="bg-[#F4F4F6] p-4 rounded-2xl border border-black/10 space-y-1.5 text-xs text-black/60">
                   <div className="flex justify-between">
                     <span>Productos ({totalCartCount}):</span>
-                    <span className="font-bold text-stone-900">{formatCLP(cartSubtotal)}</span>
+                    <span className="font-bold text-black">{formatCLP(cartSubtotal)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-emerald-600 font-bold">
+                    <div className="flex justify-between text-black font-semibold">
                       <span>Descuento Cupón:</span>
                       <span>-{formatCLP(discountAmount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span>Despacho:</span>
-                    <span className="font-bold text-stone-900">
+                    <span className="font-bold text-black">
                       {shippingFee === 0 ? 'GRATIS' : formatCLP(shippingFee)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-base font-black text-stone-950 pt-2 border-t border-stone-200">
+                  <div className="flex justify-between text-base font-black text-black pt-2 border-t border-black/10">
                     <span>Total a Pagar:</span>
-                    <span className="text-orange-600">{formatCLP(finalTotal)}</span>
+                    <span className="text-black font-semibold">{formatCLP(finalTotal)}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 pt-2">
                   <button
                     onClick={() => setCheckoutStep(2)}
-                    className="w-1/3 py-3 rounded-xl border border-stone-200 font-bold text-xs text-stone-700 hover:bg-stone-50"
+                    className="w-1/3 py-3 rounded-full border border-black/15 font-medium text-xs text-black hover:bg-[#F4F4F6]"
                   >
                     ← Volver
                   </button>
                   <button
                     onClick={handleCompleteOrder}
-                    className="flex-1 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-lg flex items-center justify-center gap-2"
+                    className="flex-1 py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm shadow-xs flex items-center justify-center gap-2"
                   >
                     <span>Confirmar y Pagar ({formatCLP(finalTotal)})</span>
                   </button>
@@ -1561,33 +1566,33 @@ export default function App() {
       {/* 9. ORDER CONFIRMATION */}
       {confirmedOrder && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-stone-200 text-center animate-scale-in">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 text-3xl flex items-center justify-center mx-auto mb-4 font-black">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-black/10 text-center animate-scale-in">
+            <div className="w-14 h-14 rounded-full bg-black text-white text-2xl flex items-center justify-center mx-auto mb-4 font-semibold">
               ✓
             </div>
-            <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
+            <span className="text-xs font-medium text-black uppercase tracking-widest">
               ¡Compra Confirmada con Éxito!
             </span>
-            <h3 className="text-2xl font-black text-stone-950 mt-1 mb-2">
+            <h3 className="text-2xl font-black text-black mt-1 mb-2">
               Orden #{confirmedOrder.orderNumber}
             </h3>
-            <p className="text-xs text-stone-500 mb-6 max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-black/50 mb-6 max-w-sm mx-auto leading-relaxed">
               Gracias <strong>{confirmedOrder.customerName}</strong> por tu compra. Hemos registrado tu pedido con entrega en{' '}
               <strong>{confirmedOrder.city}</strong>.
             </p>
 
-            <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 text-left space-y-2 text-xs mb-6">
-              <div className="flex justify-between text-stone-500">
+            <div className="bg-[#F4F4F6] p-4 rounded-2xl border border-black/10 text-left space-y-2 text-xs mb-6">
+              <div className="flex justify-between text-black/50">
                 <span>Fecha:</span>
                 <span className="font-semibold text-stone-800">{confirmedOrder.date}</span>
               </div>
-              <div className="flex justify-between text-stone-500">
+              <div className="flex justify-between text-black/50">
                 <span>Método de Pago:</span>
                 <span className="font-semibold text-stone-800 uppercase">{confirmedOrder.paymentMethod}</span>
               </div>
-              <div className="flex justify-between text-stone-500">
+              <div className="flex justify-between text-black/50">
                 <span>Total Pagado:</span>
-                <span className="font-black text-stone-950 text-sm">{formatCLP(confirmedOrder.total)}</span>
+                <span className="font-black text-black text-sm">{formatCLP(confirmedOrder.total)}</span>
               </div>
             </div>
 
@@ -1596,13 +1601,13 @@ export default function App() {
                 href={buildWhatsAppOrderLink(confirmedOrder)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition-all"
+                className="w-full py-3 px-4 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all"
               >
                 <span>📲 Compartir Comprobante por WhatsApp</span>
               </a>
               <button
                 onClick={() => setConfirmedOrder(null)}
-                className="w-full py-2.5 rounded-xl border border-stone-200 text-stone-700 font-bold text-xs hover:bg-stone-50"
+                className="w-full py-2.5 rounded-full border border-black/15 text-black font-medium text-xs hover:bg-[#F4F4F6]"
               >
                 Seguir Comprando en la Tienda
               </button>
@@ -1613,12 +1618,12 @@ export default function App() {
 
       {/* 10. CATALOG VIEWER */}
       {activeCatalog && (
-        <div className="fixed inset-0 z-50 bg-stone-950 flex flex-col animate-fade-in">
-          <div className="bg-stone-900 border-b border-stone-800 px-4 py-2.5 flex items-center justify-between text-white select-none">
+        <div className="fixed inset-0 z-50 bg-black flex flex-col animate-fade-in">
+          <div className="bg-black border-b border-neutral-800 px-4 py-2.5 flex items-center justify-between text-white select-none">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 onClick={() => setActiveCatalog(null)}
-                className="p-1.5 rounded-lg hover:bg-stone-800 text-stone-400 hover:text-white transition-colors"
+                className="p-1.5 rounded-full hover:bg-neutral-800 text-white/60 hover:text-white transition-colors"
                 title="Cerrar visor (ESC)"
               >
                 ✕
@@ -1626,21 +1631,21 @@ export default function App() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-sm truncate">{activeCatalog.title}</span>
-                  <span className="hidden sm:inline text-xs text-stone-400">• {activeCatalog.campaign}</span>
+                  <span className="hidden sm:inline text-xs text-white/40">• {activeCatalog.campaign}</span>
                 </div>
-                <div className="text-xs text-stone-400">
+                <div className="text-xs text-white/50">
                   Página <strong className="text-white">{currentPage}</strong> de {activeCatalog.totalPages}
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <div className="hidden sm:flex items-center bg-stone-800 rounded-lg p-0.5 border border-stone-700">
-                <button onClick={() => setZoomLevel((z) => Math.max(0.75, z - 0.25))} className="px-2 py-1 text-xs text-stone-300 hover:text-white font-bold">
+              <div className="hidden sm:flex items-center bg-neutral-900 rounded-lg p-0.5 border border-neutral-800">
+                <button onClick={() => setZoomLevel((z) => Math.max(0.75, z - 0.25))} className="px-2 py-1 text-xs text-white/80 hover:text-white font-bold">
                   −
                 </button>
-                <span className="px-2 text-xs font-mono text-stone-400">{Math.round(zoomLevel * 100)}%</span>
-                <button onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.25))} className="px-2 py-1 text-xs text-stone-300 hover:text-white font-bold">
+                <span className="px-2 text-xs font-mono text-white/60">{Math.round(zoomLevel * 100)}%</span>
+                <button onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.25))} className="px-2 py-1 text-xs text-white/80 hover:text-white font-bold">
                   +
                 </button>
               </div>
@@ -1648,7 +1653,7 @@ export default function App() {
               <button
                 onClick={() => setShowThumbnails((prev) => !prev)}
                 className={`p-2 rounded-lg text-xs font-medium border transition-colors ${
-                  showThumbnails ? 'bg-orange-600 text-white border-orange-500' : 'bg-stone-800 text-stone-300 border-stone-700 hover:bg-stone-700'
+                  showThumbnails ? 'bg-black text-white border-black' : 'bg-neutral-900 text-white/80 border-neutral-800 hover:bg-stone-700'
                 }`}
                 title="Miniaturas"
               >
@@ -1658,7 +1663,7 @@ export default function App() {
               <a
                 href={activeCatalog.pdfUrl}
                 download
-                className="hidden md:flex p-2 rounded-lg bg-stone-800 text-stone-300 border border-stone-700 hover:bg-stone-700 text-xs font-bold"
+                className="hidden md:flex p-2 rounded-lg bg-neutral-900 text-white/80 border border-neutral-800 hover:bg-stone-700 text-xs font-bold"
                 title="Descargar PDF"
               >
                 ⬇️ PDF
@@ -1666,14 +1671,14 @@ export default function App() {
 
               <button
                 onClick={() => setActiveCatalog(null)}
-                className="p-2 rounded-lg bg-stone-800 hover:bg-red-600 text-stone-300 hover:text-white text-xs font-bold"
+                className="p-2 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white/80 hover:text-white text-xs font-medium px-3"
               >
                 ✕ Salir
               </button>
             </div>
           </div>
 
-          <div className="flex-1 relative flex items-center justify-center overflow-auto p-2 sm:p-4 bg-stone-950">
+          <div className="flex-1 relative flex items-center justify-center overflow-auto p-2 sm:p-4 bg-black">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1}
@@ -1708,13 +1713,13 @@ export default function App() {
           </div>
 
           {showThumbnails && (
-            <div className="bg-stone-900 border-t border-stone-800 p-2 sm:p-3 overflow-x-auto flex gap-2 h-28 sm:h-32 select-none">
+            <div className="bg-black border-t border-neutral-800 p-2 sm:p-3 overflow-x-auto flex gap-2 h-28 sm:h-32 select-none">
               {Array.from({ length: activeCatalog.totalPages }, (_, i) => i + 1).map((pageNum) => (
                 <div
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
                   className={`flex-shrink-0 cursor-pointer rounded-lg overflow-hidden border-2 relative transition-all ${
-                    currentPage === pageNum ? 'border-orange-500 scale-105 shadow-md' : 'border-stone-700 opacity-60 hover:opacity-100'
+                    currentPage === pageNum ? 'border-black scale-105 shadow-md' : 'border-neutral-800 opacity-60 hover:opacity-100'
                   }`}
                   style={{ width: '60px' }}
                 >
@@ -1732,19 +1737,19 @@ export default function App() {
             </div>
           )}
 
-          <div className="bg-stone-900 border-t border-stone-800 px-4 py-3 flex items-center justify-between gap-3 text-white">
+          <div className="bg-black border-t border-neutral-800 px-4 py-3 flex items-center justify-between gap-3 text-white">
             <div className="flex-1 flex items-center justify-center gap-3 max-w-md mx-auto">
-              <span className="text-xs text-stone-400">1</span>
+              <span className="text-xs text-white/40">1</span>
               <input
                 type="range"
                 min={1}
                 max={activeCatalog.totalPages}
                 value={currentPage}
                 onChange={(e) => setCurrentPage(Number(e.target.value))}
-                className="w-full accent-orange-500 h-1.5 bg-stone-800 rounded-lg cursor-pointer"
+                className="w-full accent-white h-1.5 bg-neutral-800 rounded-lg cursor-pointer"
               />
-              <span className="text-xs text-stone-400">{activeCatalog.totalPages}</span>
-              <div className="flex items-center gap-1 bg-stone-800 rounded-lg px-2 py-1 border border-stone-700 text-xs">
+              <span className="text-xs text-white/40">{activeCatalog.totalPages}</span>
+              <div className="flex items-center gap-1 bg-neutral-900 rounded-lg px-2 py-1 border border-neutral-800 text-xs">
                 <span>Pág.</span>
                 <input
                   type="number"
@@ -1764,40 +1769,43 @@ export default function App() {
       )}
 
       {/* 11. FOOTER */}
-      <footer className="bg-stone-950 text-stone-400 py-12 border-t border-stone-800 text-xs">
+      <footer className="bg-black text-white/60 py-16 border-t border-white/10 text-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 pb-8 border-b border-stone-800">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 pb-12 border-b border-white/10">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-6 rounded-lg bg-orange-600 text-white font-black text-xs flex items-center justify-center">
-                  C14
-                </span>
-                <span className="font-black text-sm text-white tracking-tight">
-                  BEAUTY & STORE CHILE
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black flex-shrink-0">
+                  <svg width="18" height="18" viewBox="0 0 40 40" fill="none">
+                    <rect x="8" y="4" width="8" height="28" rx="4" transform="rotate(-35 8 4)" fill="#000000" />
+                    <rect x="20" y="4" width="8" height="28" rx="4" transform="rotate(-35 20 4)" fill="#000000" />
+                  </svg>
+                </div>
+                <span className="font-semibold text-sm text-white tracking-tight">
+                  Natura & Avon Chile
                 </span>
               </div>
-              <p className="text-stone-500 leading-relaxed">
-                Tienda oficial digital con más de 50 productos de catálogo en stock para todo Chile. Natura Cosméticos, Avon y Casa & Estilo.
+              <p className="text-white/60 leading-relaxed text-xs">
+                Plataforma oficial con más de 680 productos del Ciclo 14 / 2026 con entrega a todo Chile. Natura Cosméticos, Avon y Casa & Estilo.
               </p>
             </div>
 
             <div>
-              <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
+              <h4 className="text-white font-medium text-xs uppercase tracking-wider mb-3">
                 Garantías de Compra
               </h4>
-              <ul className="space-y-1.5 text-stone-400">
+              <ul className="space-y-2 text-white/60">
                 <li>✓ Productos 100% Originales</li>
-                <li>✓ Envío Seguro a todo Chile</li>
+                <li>✓ Despacho rápido a todo Chile</li>
                 <li>✓ Garantía de Satisfacción Total</li>
-                <li>✓ Pagos encriptados con Webpay</li>
+                <li>✓ Pagos encriptados y seguros</li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
+              <h4 className="text-white font-medium text-xs uppercase tracking-wider mb-3">
                 Revistas Digitales
               </h4>
-              <ul className="space-y-1.5 text-stone-400">
+              <ul className="space-y-2 text-white/60">
                 {CATALOGS.map((c) => (
                   <li key={c.id}>
                     <button
@@ -1812,35 +1820,35 @@ export default function App() {
             </div>
 
             <div>
-              <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
-                Medios de Pago Aceptados
+              <h4 className="text-white font-medium text-xs uppercase tracking-wider mb-3">
+                Medios de Pago
               </h4>
               <div className="flex flex-wrap gap-2 mb-3">
-                <span className="bg-stone-900 border border-stone-800 px-2 py-1 rounded text-[11px] text-stone-300 font-mono">
+                <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
                   Webpay Plus
                 </span>
-                <span className="bg-stone-900 border border-stone-800 px-2 py-1 rounded text-[11px] text-stone-300 font-mono">
+                <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
                   Redcompra
                 </span>
-                <span className="bg-stone-900 border border-stone-800 px-2 py-1 rounded text-[11px] text-stone-300 font-mono">
-                  Visa / Mastercard
+                <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
+                  Crédito / Débito
                 </span>
-                <span className="bg-stone-900 border border-stone-800 px-2 py-1 rounded text-[11px] text-stone-300 font-mono">
+                <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
                   Transferencia
                 </span>
               </div>
-              <p className="text-[11px] text-stone-500">
+              <p className="text-[11px] text-white/50">
                 Atención personalizada y pedidos por WhatsApp 24/7.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-stone-500 text-[11px]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-white/40 text-[11px]">
             <div>
-              © 2026 Beauty & Store Chile • Campaña Ciclo 14. Todos los derechos reservados.
+              © 2026 Natura & Avon Chile • Campaña Ciclo 14. Todos los derechos reservados.
             </div>
             <div>
-              Desarrollado sobre Vite + React + TypeScript + Tailwind CSS
+              Diseño minimalista monochrome • Inter Typography
             </div>
           </div>
         </div>

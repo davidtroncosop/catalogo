@@ -102,21 +102,48 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       </motion.nav>
 
-      {/* 2. ABSOLUTELY POSITIONED FULL-SCREEN VIDEO BEHIND EVERYTHING */}
+      {/* 2. MINIMALIST EDITORIAL BACKDROP (NO VIDEO) */}
       <motion.div
-        className="hero-video-wrapper"
-        initial={{ opacity: 0, scale: 1.05 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.8, ease: customEase }}
+        className="hero-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease: customEase }}
       >
-        <video
-          className="hero-video"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
+        <div className="hero-backdrop-grid" />
+        <motion.div
+          className="hero-center-showcase"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.9, ease: customEase }}
+        >
+          <div className="hero-center-badge">
+            <span>Ciclo 14 · Edición Oficial 2026</span>
+          </div>
+
+          <div className="hero-center-visual">
+            <div
+              className="hero-feature-card"
+              onClick={onExploreCatalog}
+              role="button"
+              tabIndex={0}
+            >
+              <span className="hero-feature-icon">✨</span>
+              <span className="hero-feature-title">680+ Productos Reales</span>
+              <span className="hero-feature-desc">• Natura & Avon</span>
+            </div>
+
+            <div
+              className="hero-feature-card"
+              onClick={onExploreCatalog}
+              role="button"
+              tabIndex={0}
+            >
+              <span className="hero-feature-icon">📖</span>
+              <span className="hero-feature-title">4 Revistas Digitales</span>
+              <span className="hero-feature-desc">• Interactivas</span>
+            </div>
+          </div>
+        </motion.div>
       </motion.div>
 
       {/* 3. FOOTER CONTENT PINNED TO BOTTOM OVER GRADIENT */}
