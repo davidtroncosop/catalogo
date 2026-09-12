@@ -1,0 +1,38 @@
+[
+  {
+    "source": "Natura c14.pdf",
+    "copy": "natura-c14.pdf",
+    "pages": 194,
+    "rasterPages": 194,
+    "maxThumbnailDifference": 10.226,
+    "sourceSha256": "9cbfaf4619c8e5439669428f4151312433072781f796f6da46ba75ad54386718",
+    "copySha256": "7fff6a345c9cb2999509feb6f25cc56cdff37e1307b77df56e8d0ec3a25a38a7"
+  },
+  {
+    "source": "Avon c14.pdf",
+    "copy": "avon-c14.pdf",
+    "pages": 164,
+    "rasterPages": 0,
+    "maxThumbnailDifference": 0,
+    "sourceSha256": "fc93b06db58f15dbd2af708fff7729d3e375dde49abc6dc72b3f12797d49f700",
+    "copySha256": "525ee744823cf48bc2e1a1626c0987200882212325831d7496bc8ca6d0f01edd"
+  },
+  {
+    "source": "Casa y Estilo c14.pdf",
+    "copy": "casa-estilo-c14.pdf",
+    "pages": 22,
+    "rasterPages": 0,
+    "maxThumbnailDifference": 0,
+    "sourceSha256": "c216a7359e4ece2d2993422035a77e719c01a0e8683a4cdacc37713d0771260a",
+    "copySha256": "ba4760950614bc21b4cddf9df6440561b2f22e505b845b5d7c1cf1146b9c3941"
+  },
+  {
+    "source": "Ciclo_14.pdf",
+    "copy": "ciclo-14.pdf",
+    "pages": 58,
+    "rasterPages": 0,
+    "maxThumbnailDifference": 0,
+    "sourceSha256": "778aa075f9b4f661fc66eccb766c2add07e140f5e8a397daf0ef8c2f344ca360",
+    "copySha256": "a8ecf2c719d0b0612b2cd9ff2e6466f8ba1383c2eee692cea95c6fc4446debcd"
+  }
+]

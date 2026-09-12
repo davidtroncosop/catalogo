@@ -3,6 +3,50 @@ export type { Product, CartItem, CatalogItem, OrderConfirmation } from './types'
 import type { CatalogItem, CartItem, Product, OrderConfirmation } from './types';
 import { PRODUCTS } from './data/products';
 import { HeroSection } from './HeroSection';
+import { ProductImage } from './ProductImage';
+import { CategoryDiscovery } from './CategoryDiscovery';
+import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import './storefront.css';
+
+export type SortOption =
+  | 'featured'
+  | 'price-asc'
+  | 'price-desc'
+  | 'discount'
+  | 'name-asc'
+  | 'name-desc'
+  | 'page-asc';
+
+export type PriceFilterOption =
+  | 'all'
+  | 'under5k'
+  | '5k-15k'
+  | '15k-30k'
+  | 'over30k'
+  | 'custom';
+
+export type DiscountFilterOption =
+  | 'all'
+  | 'any'
+  | '20plus'
+  | '30plus'
+  | '40plus';
+
+export type CatalogFilterOption =
+  | 'all'
+  | 'natura'
+  | 'avon'
+  | 'casa-estilo'
+  | 'ciclo-14';
+
+export type PriceStatusOption =
+  | 'all'
+  | 'with-price'
+  | 'consult';
+
+
+const FEATURED = ['natura-228525', 'avon-135847', 'natura-187709', 'natura-110181', 'natura-163706', 'natura-97701', 'natura-116582', 'natura-174032'];
+const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
 // --- CATALOG DATA ---
 const CATALOGS: CatalogItem[] = [
@@ -124,13 +168,19 @@ const formatCLP = (amount: number) => {
 };
 
 export default function App() {
-  // Navigation
+  // Navigation & Filtering
   const [activeTab, setActiveTab] = useState<'store' | 'catalogs'>('store');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos los Productos');
   const [selectedBrand, setSelectedBrand] = useState<string>('Todas las Marcas');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'discount'>('featured');
-  const [priceFilter, setPriceFilter] = useState<'all' | 'under10k' | '10k-20k' | 'over20k'>('all');
+  const [sortBy, setSortBy] = useState<SortOption>('featured');
+  const [priceFilter, setPriceFilter] = useState<PriceFilterOption>('all');
+  const [customMinPrice, setCustomMinPrice] = useState<string>('');
+  const [customMaxPrice, setCustomMaxPrice] = useState<string>('');
+  const [discountFilter, setDiscountFilter] = useState<DiscountFilterOption>('all');
+  const [catalogFilter, setCatalogFilter] = useState<CatalogFilterOption>('all');
+  const [priceStatusFilter, setPriceStatusFilter] = useState<PriceStatusOption>('all');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
 
   // Favorites
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -214,6 +264,11 @@ export default function App() {
   // Add to cart
   const handleAddToCart = (product: Product, quantity = 1, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    if (product.priceStatus === 'consult') {
+      setQuickViewProduct(product);
+      triggerToast('Consulta el precio y las condiciones en la página de la revista.');
+      return;
+    }
     setCart((prev) => {
       const idx = prev.findIndex((item) => item.product.id === product.id);
       if (idx >= 0) {
@@ -274,7 +329,8 @@ export default function App() {
     }
   };
 
-  // Filtering
+
+  // Filtering & Sorting
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((p) => {
       if (showOnlyFavorites && !favorites.includes(p.id)) return false;
@@ -283,25 +339,108 @@ export default function App() {
         selectedCategory === 'Todos los Productos' || p.category === selectedCategory;
       const matchesBrand =
         selectedBrand === 'Todas las Marcas' || p.brand === selectedBrand;
-      const matchesSearch =
-        searchQuery === '' ||
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.code.includes(searchQuery);
+      const matchesSearch = normalizeSearch([p.name, p.description, p.brand, p.code].join(' ')).includes(normalizeSearch(searchQuery.trim()));
 
+      // Price Presets
       let matchesPrice = true;
-      if (priceFilter === 'under10k') matchesPrice = p.price < 10000;
-      else if (priceFilter === '10k-20k') matchesPrice = p.price >= 10000 && p.price <= 20000;
-      else if (priceFilter === 'over20k') matchesPrice = p.price > 20000;
+      if (priceFilter === 'under5k') matchesPrice = p.price < 5000;
+      else if (priceFilter === '5k-15k') matchesPrice = p.price >= 5000 && p.price <= 15000;
+      else if (priceFilter === '15k-30k') matchesPrice = p.price > 15000 && p.price <= 30000;
+      else if (priceFilter === 'over30k') matchesPrice = p.price > 30000;
 
-      return matchesCategory && matchesBrand && matchesSearch && matchesPrice;
+      // Custom price min & max
+      if (customMinPrice.trim()) {
+        const minVal = parseFloat(customMinPrice.replace(/[^0-9]/g, ''));
+        if (!isNaN(minVal) && p.price < minVal) matchesPrice = false;
+      }
+      if (customMaxPrice.trim()) {
+        const maxVal = parseFloat(customMaxPrice.replace(/[^0-9]/g, ''));
+        if (!isNaN(maxVal) && p.price > maxVal) matchesPrice = false;
+      }
+
+      // Hide price consult items when filtering by specific prices
+      if ((priceFilter !== 'all' || customMinPrice.trim() || customMaxPrice.trim()) && p.priceStatus === 'consult') {
+        matchesPrice = false;
+      }
+
+      // Discount / Offers Filter
+      let matchesDiscount = true;
+      if (discountFilter === 'any') matchesDiscount = p.discountPercent > 0;
+      else if (discountFilter === '20plus') matchesDiscount = p.discountPercent >= 20;
+      else if (discountFilter === '30plus') matchesDiscount = p.discountPercent >= 30;
+      else if (discountFilter === '40plus') matchesDiscount = p.discountPercent >= 40;
+
+      // Catalog origin filter
+      let matchesCatalog = true;
+      if (catalogFilter !== 'all') matchesCatalog = p.catalogSlug === catalogFilter;
+
+      // Price Status filter
+      let matchesPriceStatus = true;
+      if (priceStatusFilter === 'with-price') matchesPriceStatus = p.priceStatus !== 'consult';
+      else if (priceStatusFilter === 'consult') matchesPriceStatus = p.priceStatus === 'consult';
+
+      return (
+        matchesCategory &&
+        matchesBrand &&
+        matchesSearch &&
+        matchesPrice &&
+        matchesDiscount &&
+        matchesCatalog &&
+        matchesPriceStatus
+      );
     }).sort((a, b) => {
-      if (sortBy === 'price-asc') return a.price - b.price;
-      if (sortBy === 'price-desc') return b.price - a.price;
-      if (sortBy === 'discount') return b.discountPercent - a.discountPercent;
-      return b.rating - a.rating;
+      // Sort by price (ascending - menor a mayor)
+      if (sortBy === 'price-asc') {
+        if ((a.priceStatus === 'consult') !== (b.priceStatus === 'consult')) {
+          return a.priceStatus === 'consult' ? 1 : -1;
+        }
+        return a.price - b.price;
+      }
+      // Sort by price (descending - mayor a menor)
+      if (sortBy === 'price-desc') {
+        if ((a.priceStatus === 'consult') !== (b.priceStatus === 'consult')) {
+          return a.priceStatus === 'consult' ? 1 : -1;
+        }
+        return b.price - a.price;
+      }
+      // Sort by discount %
+      if (sortBy === 'discount') {
+        if (b.discountPercent !== a.discountPercent) {
+          return b.discountPercent - a.discountPercent;
+        }
+        return b.price - a.price;
+      }
+      // Sort by Name A-Z
+      if (sortBy === 'name-asc') {
+        return a.name.localeCompare(b.name, 'es', { sensitivity: 'base' });
+      }
+      // Sort by Name Z-A
+      if (sortBy === 'name-desc') {
+        return b.name.localeCompare(a.name, 'es', { sensitivity: 'base' });
+      }
+      // Sort by Catalog page
+      if (sortBy === 'page-asc') {
+        return a.page - b.page;
+      }
+      // Default: Featured
+      const idxA = FEATURED.indexOf(a.id);
+      const idxB = FEATURED.indexOf(b.id);
+      return (idxA < 0 ? 999 : idxA) - (idxB < 0 ? 999 : idxB);
     });
-  }, [selectedCategory, selectedBrand, searchQuery, sortBy, priceFilter, showOnlyFavorites, favorites]);
+  }, [
+    selectedCategory,
+    selectedBrand,
+    searchQuery,
+    sortBy,
+    priceFilter,
+    customMinPrice,
+    customMaxPrice,
+    discountFilter,
+    catalogFilter,
+    priceStatusFilter,
+    showOnlyFavorites,
+    favorites,
+  ]);
 
   // Open Catalog at page
   const handleOpenCatalog = (catalog: CatalogItem, page = 1) => {
@@ -391,50 +530,185 @@ export default function App() {
     return `https://wa.me/${phoneClean}?text=${encodeURIComponent(text)}`;
   };
 
-  const [isScrolledPastHero, setIsScrolledPastHero] = useState<boolean>(false);
+  const hasActiveFilterOrSearch =
+    showOnlyFavorites ||
+    Boolean(searchQuery.trim()) ||
+    selectedCategory !== 'Todos los Productos' ||
+    selectedBrand !== 'Todas las Marcas' ||
+    priceFilter !== 'all' ||
+    discountFilter !== 'all' ||
+    catalogFilter !== 'all' ||
+    priceStatusFilter !== 'all' ||
+    Boolean(customMinPrice.trim()) ||
+    Boolean(customMaxPrice.trim());
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolledPastHero(window.scrollY > window.innerHeight * 0.65);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const showDiscovery = !hasActiveFilterOrSearch;
+
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (selectedCategory !== 'Todos los Productos') count++;
+    if (selectedBrand !== 'Todas las Marcas') count++;
+    if (priceFilter !== 'all' || customMinPrice.trim() || customMaxPrice.trim()) count++;
+    if (discountFilter !== 'all') count++;
+    if (catalogFilter !== 'all') count++;
+    if (priceStatusFilter !== 'all') count++;
+    if (searchQuery.trim()) count++;
+    if (showOnlyFavorites) count++;
+    return count;
+  }, [
+    selectedCategory,
+    selectedBrand,
+    priceFilter,
+    customMinPrice,
+    customMaxPrice,
+    discountFilter,
+    catalogFilter,
+    priceStatusFilter,
+    searchQuery,
+    showOnlyFavorites,
+  ]);
+
+  const advancedFiltersActiveCount = useMemo(() => {
+    let count = 0;
+    if (discountFilter !== 'all') count++;
+    if (catalogFilter !== 'all') count++;
+    if (priceStatusFilter !== 'all') count++;
+    if (customMinPrice.trim() || customMaxPrice.trim()) count++;
+    return count;
+  }, [discountFilter, catalogFilter, priceStatusFilter, customMinPrice, customMaxPrice]);
+
+  const activeFilterChips = useMemo(() => {
+    const chips: { label: string; onRemove: () => void }[] = [];
+    if (searchQuery.trim()) {
+      chips.push({
+        label: `Búsqueda: "${searchQuery.trim()}"`,
+        onRemove: () => setSearchQuery(''),
+      });
+    }
+    if (selectedCategory !== 'Todos los Productos') {
+      chips.push({
+        label: `Categoría: ${selectedCategory}`,
+        onRemove: () => setSelectedCategory('Todos los Productos'),
+      });
+    }
+    if (selectedBrand !== 'Todas las Marcas') {
+      chips.push({
+        label: `Marca: ${selectedBrand}`,
+        onRemove: () => setSelectedBrand('Todas las Marcas'),
+      });
+    }
+    if (priceFilter !== 'all' && priceFilter !== 'custom') {
+      const priceLabels: Record<string, string> = {
+        under5k: 'Hasta $5.000',
+        '5k-15k': '$5.000 - $15.000',
+        '15k-30k': '$15.000 - $30.000',
+        over30k: 'Más de $30.000',
+      };
+      chips.push({
+        label: `Precio: ${priceLabels[priceFilter] || priceFilter}`,
+        onRemove: () => setPriceFilter('all'),
+      });
+    }
+    if (customMinPrice.trim() || customMaxPrice.trim()) {
+      const minTxt = customMinPrice.trim() ? formatCLP(+customMinPrice.replace(/[^0-9]/g, '')) : '$0';
+      const maxTxt = customMaxPrice.trim() ? formatCLP(+customMaxPrice.replace(/[^0-9]/g, '')) : 'Sin tope';
+      chips.push({
+        label: `Rango: ${minTxt} - ${maxTxt}`,
+        onRemove: () => {
+          setCustomMinPrice('');
+          setCustomMaxPrice('');
+          setPriceFilter('all');
+        },
+      });
+    }
+    if (discountFilter !== 'all') {
+      const discountLabels: Record<string, string> = {
+        any: 'En Oferta',
+        '20plus': '≥ 20% OFF',
+        '30plus': '≥ 30% OFF',
+        '40plus': '≥ 40% OFF',
+      };
+      chips.push({
+        label: `Oferta: ${discountLabels[discountFilter] || discountFilter}`,
+        onRemove: () => setDiscountFilter('all'),
+      });
+    }
+    if (catalogFilter !== 'all') {
+      const cat = CATALOGS.find((c) => c.slug === catalogFilter);
+      chips.push({
+        label: `Revista: ${cat ? cat.brand : catalogFilter}`,
+        onRemove: () => setCatalogFilter('all'),
+      });
+    }
+    if (priceStatusFilter !== 'all') {
+      chips.push({
+        label: priceStatusFilter === 'with-price' ? 'Precio publicado' : 'Precio a consultar',
+        onRemove: () => setPriceStatusFilter('all'),
+      });
+    }
+    if (showOnlyFavorites) {
+      chips.push({
+        label: 'Solo Favoritos',
+        onRemove: () => setShowOnlyFavorites(false),
+      });
+    }
+    return chips;
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedBrand,
+    priceFilter,
+    customMinPrice,
+    customMaxPrice,
+    discountFilter,
+    catalogFilter,
+    priceStatusFilter,
+    showOnlyFavorites,
+  ]);
+
+  const scrollToProducts = () => requestAnimationFrame(() => document.getElementById('product-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+
+  const resetFilters = () => {
+    setSelectedCategory('Todos los Productos');
+    setSelectedBrand('Todas las Marcas');
+    setSearchQuery('');
+    setSortBy('featured');
+    setPriceFilter('all');
+    setCustomMinPrice('');
+    setCustomMaxPrice('');
+    setDiscountFilter('all');
+    setCatalogFilter('all');
+    setPriceStatusFilter('all');
+    setShowOnlyFavorites(false);
+    setVisibleCount(16);
+  };
+
+  const browseCategory = (category: string) => {
+    setActiveTab('store');
+    setSelectedCategory(category);
+    setSelectedBrand('Todas las Marcas');
+    setPriceFilter('all');
+    setCustomMinPrice('');
+    setCustomMaxPrice('');
+    setDiscountFilter('all');
+    setCatalogFilter('all');
+    setPriceStatusFilter('all');
+    setSearchQuery('');
+    setShowOnlyFavorites(false);
+    setVisibleCount(16);
+    scrollToProducts();
+  };
+
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAFA] text-black selection:bg-neutral-200">
-      {/* 0. FULL-SCREEN HERO SECTION LANDING PAGE */}
-      <HeroSection
-        isScrolled={isScrolledPastHero}
-        onExploreCatalog={() => {
-          const el = document.getElementById('catalogo-store');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
-        onOpenMenu={() => {
-          setActiveTab(activeTab === 'store' ? 'catalogs' : 'store');
-          const el = document.getElementById('catalogo-store');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
-      />
-
+    <div className="beauty-store min-h-screen flex flex-col text-black">
       <div id="catalogo-store">
         {/* 1. ANNOUNCEMENT BAR */}
-      <div className="bg-[#F4F4F6] border-b border-black/8 text-black text-xs py-2 px-4 text-center font-medium flex items-center justify-between sm:justify-center gap-4 select-none">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-black inline-block" />
-          <span>🚚 <strong>Envío GRATIS</strong> a todo Chile en compras sobre $35.000</span>
-        </div>
-        <div className="hidden md:flex items-center gap-4 text-black/60">
-          <span>•</span>
-          <span>🎟️ Cupón 10% OFF: <strong className="text-black bg-white px-2 py-0.5 rounded-full border border-black/10 font-mono">CICLO14</strong></span>
-          <span>•</span>
-          <span>💳 Webpay Plus • Débito • Crédito • WhatsApp</span>
-        </div>
-      </div>
+      <div className="beauty-announcement">Un nuevo ciclo para descubrir tus favoritos · Natura & Avon</div>
 
       {/* 2. NAVBAR */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-black/8 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      <header className="beauty-header sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-black/8 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
           {/* Brand Logo */}
           <div
             onClick={() => {
@@ -456,7 +730,7 @@ export default function App() {
                 <span className="font-semibold text-sm sm:text-base tracking-tight text-black leading-none">
                   Natura & Avon
                 </span>
-                <span className="bg-[#F4F4F6] text-black text-[10px] font-medium px-2.5 py-0.5 rounded-full border border-black/8">
+                <span className="hidden lg:inline bg-[#F4F4F6] text-black text-[10px] font-medium px-2.5 py-0.5 rounded-full border border-black/8">
                   {PRODUCTS.length} Productos
                 </span>
               </div>
@@ -467,20 +741,21 @@ export default function App() {
           </div>
 
           {/* Search bar */}
-          <div className="flex-1 max-w-md hidden md:block">
+          <div className="order-last w-full md:order-none md:flex-1 md:max-w-md">
             <div className="relative">
               <input
                 type="text"
+                aria-label="Buscar productos por nombre o código"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar por código (ej: 135849, 114201), producto o marca..."
+                onChange={(e) => { setSearchQuery(e.target.value); setActiveTab('store'); }}
+                placeholder="Busca tu favorito, marca o código..."
                 className="w-full pl-10 pr-4 py-2 bg-[#F4F4F6] border border-black/8 rounded-full text-xs font-medium text-black placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all"
               />
               <svg className="w-4 h-4 absolute left-3.5 top-2.5 text-black/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-black/40 hover:text-black text-xs font-bold">
+                <button aria-label="Limpiar búsqueda" onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-black/40 hover:text-black text-xs font-bold">
                   ✕
                 </button>
               )}
@@ -502,7 +777,7 @@ export default function App() {
               }`}
               title="Ver mis favoritos"
             >
-              <span>{showOnlyFavorites ? '❤️' : '🤍'}</span>
+              <Heart size={17} fill={showOnlyFavorites ? "currentColor" : "none"} />
               <span className="hidden sm:inline">Favoritos</span>
               {favorites.length > 0 && (
                 <span className="w-4 h-4 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center">
@@ -523,13 +798,14 @@ export default function App() {
                   : 'bg-white hover:bg-[#F4F4F6] text-black border-black/10'
               }`}
             >
-              <span>📖</span>
+              <BookOpen size={17} />
               <span className="hidden sm:inline">Revistas Digitales</span>
-              <span className="sm:hidden">Revistas</span>
+              <span className="sr-only sm:hidden">Revistas</span>
             </button>
 
             {/* Shopping Cart Button */}
             <button
+              aria-label="Abrir carrito"
               onClick={() => setIsCartOpen(true)}
               className="relative flex items-center gap-2 pl-3.5 pr-2 py-1.5 rounded-full bg-black hover:bg-neutral-900 text-white font-medium text-xs sm:text-sm shadow-sm transition-all hover:scale-105 active:scale-95"
             >
@@ -545,7 +821,8 @@ export default function App() {
         </div>
 
         {/* Quick Product Code Search Strip */}
-        <div className="border-t border-black/8 bg-[#F4F4F6] px-4 py-2 text-xs">
+        <details className="beauty-quick-order border-t border-black/8 px-4 py-2 text-xs">
+          <summary>¿Ya tienes tus códigos? Haz tu pedido rápido</summary>
           <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-black/75 font-medium">
               <span>⚡</span>
@@ -568,11 +845,11 @@ export default function App() {
               </button>
             </div>
           </div>
-        </div>
+        </details>
 
         {/* Categories Bar */}
         <div className="border-t border-stone-100 bg-white overflow-x-auto no-scrollbar">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-2">
+          <div className="beauty-category-nav max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-2">
             {CATEGORIES.map((cat) => {
               const count =
                 cat === 'Todos los Productos'
@@ -581,11 +858,8 @@ export default function App() {
               return (
                 <button
                   key={cat}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setActiveTab('store');
-                    setShowOnlyFavorites(false);
-                  }}
+                  onClick={() => browseCategory(cat)}
+                  aria-pressed={selectedCategory === cat && activeTab === 'store' && !showOnlyFavorites}
                   className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
                     selectedCategory === cat && activeTab === 'store' && !showOnlyFavorites
                       ? 'bg-black text-white shadow-sm'
@@ -625,101 +899,400 @@ export default function App() {
 
       {/* 4. CONTENT */}
       {activeTab === 'store' ? (
-        <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-          {/* E-Commerce Promotional Minimal Banner */}
-          {!showOnlyFavorites && (
-            <div className="relative rounded-3xl overflow-hidden bg-black text-white p-6 sm:p-10 mb-8 border border-black/10">
-              <div className="max-w-2xl relative z-10">
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-xs font-medium uppercase tracking-wider mb-4 border border-white/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                  Campaña Ciclo 14 / 2026 Chile • 680+ Productos Oficiales
-                </span>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] mb-4">
-                  Gran Tienda Online Natura, Avon y Casa & Estilo
-                </h1>
-                <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 font-normal">
-                  Encuentra todas las fragancias, cremas, maquillaje y productos de hogar extraídos directamente de los catálogos del Ciclo 14 con descuentos de hasta el 70%.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => setSelectedCategory('Kits & Ofertas')}
-                    className="px-5 py-2.5 rounded-full bg-white text-black font-medium text-xs sm:text-sm hover:bg-neutral-200 transition-all hover:scale-105 active:scale-95"
-                  >
-                    Ver Kits & Outlet (-70%)
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('catalogs')}
-                    className="px-5 py-2.5 rounded-full bg-transparent hover:bg-white/10 text-white font-medium text-xs sm:text-sm border border-white/20 transition-all"
-                  >
-                    Hojea las 4 Revistas Digitales
-                  </button>
-                </div>
-              </div>
+        <main className="beauty-main flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+          {showDiscovery && <>
+            <HeroSection productCount={PRODUCTS.length} onExploreCatalog={scrollToProducts} onMakeup={() => browseCategory('Maquillaje')} onOpenCatalogs={() => setActiveTab('catalogs')} />
+            <CategoryDiscovery onSelect={browseCategory} />
+          </>}
+          <div id="product-results" className="beauty-section-heading beauty-results-heading">
+            <div>
+              <span className="beauty-kicker">{showDiscovery ? 'SELECCIONADOS PARA TI' : 'TU CATÁLOGO'}</span>
+              <h2>{showOnlyFavorites ? 'Tus favoritos' : searchQuery ? `Resultados para “${searchQuery}”` : selectedCategory !== 'Todos los Productos' ? selectedCategory : 'Encuentra tu próximo favorito'}</h2>
             </div>
-          )}
-
-          {/* Filtering & Toolbar */}
-          <div className="bg-white rounded-2xl p-4 border border-black/8 shadow-xs mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Brand Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto">
-              <span className="text-xs font-medium text-black/40 mr-2 uppercase tracking-wider hidden lg:inline">
-                Marca:
-              </span>
-              {BRANDS.map((brand) => {
-                const count =
-                  brand === 'Todas las Marcas'
-                    ? PRODUCTS.length
-                    : PRODUCTS.filter((p) => p.brand === brand).length;
-                return (
-                  <button
-                    key={brand}
-                    onClick={() => setSelectedBrand(brand)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                      selectedBrand === brand
-                        ? 'bg-black text-white'
-                        : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/70 border border-black/8'
-                    }`}
-                  >
-                    <span>{brand}</span>
-                    <span className="text-[10px] opacity-60">({count})</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Price Filter & Sort */}
-            <div className="flex items-center justify-between w-full md:w-auto gap-3 text-xs">
-              {/* Price range */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-black/50 font-medium">Precio:</span>
-                <select
-                  value={priceFilter}
-                  onChange={(e) => setPriceFilter(e.target.value as any)}
-                  className="bg-[#F4F4F6] border border-black/10 rounded-full px-3 py-1.5 font-medium text-black focus:outline-none focus:ring-1 focus:ring-black"
-                >
-                  <option value="all">Todos los precios</option>
-                  <option value="under10k">Menos de $10.000</option>
-                  <option value="10k-20k">$10.000 - $20.000</option>
-                  <option value="over20k">Más de $20.000</option>
-                </select>
-              </div>
-
-              {/* Sort by */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-black/50 font-medium">Ordenar:</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-[#F4F4F6] border border-black/10 rounded-full px-3 py-1.5 font-medium text-black focus:outline-none focus:ring-1 focus:ring-black"
-                >
-                  <option value="featured">Destacados</option>
-                  <option value="discount">Mayor Descuento</option>
-                  <option value="price-asc">Menor Precio</option>
-                  <option value="price-desc">Mayor Precio</option>
-                </select>
-              </div>
+            <div className="beauty-results-count">
+              <p role="status">{filteredProducts.length.toLocaleString('es-CL')} productos</p>
+              {hasActiveFilterOrSearch && (
+                <button onClick={resetFilters}>Limpiar filtros</button>
+              )}
             </div>
           </div>
+
+          {/* Filtering & Toolbar */}
+          <div className="beauty-filters bg-white rounded-2xl p-4 border border-black/8 shadow-xs mb-4">
+            {/* Top Row: Brand Pills & Quick Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-black/8">
+              {/* Brand Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto max-w-full no-scrollbar py-0.5">
+                <span className="text-xs font-semibold text-black/40 mr-1 uppercase tracking-wider hidden lg:inline">
+                  Marca:
+                </span>
+                {BRANDS.map((brand) => {
+                  const count =
+                    brand === 'Todas las Marcas'
+                      ? PRODUCTS.length
+                      : PRODUCTS.filter((p) => p.brand === brand).length;
+                  return (
+                    <button
+                      key={brand}
+                      onClick={() => setSelectedBrand(brand)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                        selectedBrand === brand
+                          ? 'bg-black text-white shadow-xs'
+                          : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/70 border border-black/8'
+                      }`}
+                    >
+                      <span>{brand}</span>
+                      <span className="text-[10px] opacity-60">({count})</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Quick action buttons on right: Solo Ofertas + Más Filtros */}
+              <div className="flex items-center gap-2 ml-auto">
+                {/* Solo Ofertas toggle */}
+                <button
+                  onClick={() => setDiscountFilter((prev) => (prev === 'any' ? 'all' : 'any'))}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
+                    discountFilter === 'any'
+                      ? 'bg-black text-white shadow-xs'
+                      : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/80 border border-black/8'
+                  }`}
+                  title="Mostrar solo productos con descuento"
+                >
+                  <span>🔥</span>
+                  <span>Solo Ofertas</span>
+                  <span className="text-[10px] opacity-60">
+                    ({PRODUCTS.filter((p) => p.discountPercent > 0).length})
+                  </span>
+                </button>
+
+                {/* Más Filtros toggle */}
+                <button
+                  onClick={() => setShowAdvancedFilters((prev) => !prev)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all flex items-center gap-1.5 ${
+                    showAdvancedFilters || advancedFiltersActiveCount > 0
+                      ? 'bg-black text-white border-black'
+                      : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black border-black/8'
+                  }`}
+                >
+                  <SlidersHorizontal size={13} />
+                  <span>Más Filtros</span>
+                  {advancedFiltersActiveCount > 0 && (
+                    <span className="w-4 h-4 rounded-full bg-white text-black text-[10px] font-bold flex items-center justify-center">
+                      {advancedFiltersActiveCount}
+                    </span>
+                  )}
+                  {showAdvancedFilters ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Bottom Row: Quick Price Sort & Price Range */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3">
+              {/* Quick Sort Controls */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                <span className="text-black/50 font-medium flex items-center gap-1 mr-1">
+                  <ArrowUpDown size={13} />
+                  <span>Ordenar:</span>
+                </span>
+                {/* Quick Sort buttons */}
+                <button
+                  onClick={() => setSortBy('featured')}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                    sortBy === 'featured'
+                      ? 'bg-black text-white shadow-xs'
+                      : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/70 border border-black/8'
+                  }`}
+                >
+                  Destacados
+                </button>
+                <button
+                  onClick={() => setSortBy('price-asc')}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
+                    sortBy === 'price-asc'
+                      ? 'bg-black text-white shadow-xs'
+                      : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/70 border border-black/8'
+                  }`}
+                  title="Ordenar precio de menor a mayor"
+                >
+                  <span>Precio: Menor</span>
+                  <span className="text-[11px]">↑</span>
+                </button>
+                <button
+                  onClick={() => setSortBy('price-desc')}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
+                    sortBy === 'price-desc'
+                      ? 'bg-black text-white shadow-xs'
+                      : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/70 border border-black/8'
+                  }`}
+                  title="Ordenar precio de mayor a menor"
+                >
+                  <span>Precio: Mayor</span>
+                  <span className="text-[11px]">↓</span>
+                </button>
+                <button
+                  onClick={() => setSortBy('discount')}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
+                    sortBy === 'discount'
+                      ? 'bg-black text-white shadow-xs'
+                      : 'bg-[#F4F4F6] hover:bg-[#EAEAEA] text-black/70 border border-black/8'
+                  }`}
+                >
+                  <span>Mayor Descuento %</span>
+                </button>
+
+                {/* Additional Sort Options Dropdown */}
+                <select
+                  id="sort-products"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  aria-label="Más opciones de ordenamiento"
+                  className="bg-[#F4F4F6] border border-black/10 rounded-full px-2.5 py-1 font-medium text-black focus:outline-none focus:ring-1 focus:ring-black text-xs"
+                >
+                  <option value="featured">Destacados</option>
+                  <option value="price-asc">Precio: menor a mayor ↑</option>
+                  <option value="price-desc">Precio: mayor a menor ↓</option>
+                  <option value="discount">Mayor Descuento (%)</option>
+                  <option value="name-asc">Nombre: A - Z</option>
+                  <option value="name-desc">Nombre: Z - A</option>
+                  <option value="page-asc">Página de Revista (1-194)</option>
+                </select>
+              </div>
+
+              {/* Price Range Dropdown */}
+              <div className="flex items-center gap-1.5 text-xs ml-auto">
+                <label htmlFor="price-filter" className="text-black/50 font-medium">Rango Precio:</label>
+                <select
+                  id="price-filter"
+                  value={priceFilter}
+                  onChange={(e) => {
+                    const val = e.target.value as PriceFilterOption;
+                    setPriceFilter(val);
+                    if (val !== 'custom') {
+                      setCustomMinPrice('');
+                      setCustomMaxPrice('');
+                    } else {
+                      setShowAdvancedFilters(true);
+                    }
+                  }}
+                  className="bg-[#F4F4F6] border border-black/10 rounded-full px-3 py-1 font-medium text-black focus:outline-none focus:ring-1 focus:ring-black text-xs"
+                >
+                  <option value="all">Todos los precios</option>
+                  <option value="under5k">Hasta $5.000 (377)</option>
+                  <option value="5k-15k">$5.000 - $15.000 (826)</option>
+                  <option value="15k-30k">$15.000 - $30.000 (246)</option>
+                  <option value="over30k">Más de $30.000 (71)</option>
+                  <option value="custom">Personalizado...</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Advanced Filters Panel (collapsible) */}
+            {showAdvancedFilters && (
+              <div className="mt-4 pt-4 border-t border-black/8 bg-[#FAF8F6] -mx-4 -mb-4 p-4 rounded-b-2xl animate-fadeIn">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                  {/* 1. Rango Personalizado */}
+                  <div>
+                    <h4 className="font-semibold text-black mb-2 flex items-center gap-1">
+                      <span>💰</span>
+                      <span>Precio Personalizado (CLP)</span>
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <span className="absolute left-2.5 top-1.5 text-black/40">$</span>
+                        <input
+                          type="number"
+                          placeholder="Mínimo"
+                          aria-label="Precio mínimo en pesos chilenos"
+                          value={customMinPrice}
+                          onChange={(e) => {
+                            setCustomMinPrice(e.target.value);
+                            setPriceFilter('custom');
+                          }}
+                          className="w-full pl-6 pr-2 py-1.5 bg-white border border-black/15 rounded-lg text-xs font-mono text-black focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+                      </div>
+                      <span className="text-black/40">-</span>
+                      <div className="relative flex-1">
+                        <span className="absolute left-2.5 top-1.5 text-black/40">$</span>
+                        <input
+                          type="number"
+                          placeholder="Máximo"
+                          aria-label="Precio máximo en pesos chilenos"
+                          value={customMaxPrice}
+                          onChange={(e) => {
+                            setCustomMaxPrice(e.target.value);
+                            setPriceFilter('custom');
+                          }}
+                          className="w-full pl-6 pr-2 py-1.5 bg-white border border-black/15 rounded-lg text-xs font-mono text-black focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+                      </div>
+                    </div>
+                    {(customMinPrice || customMaxPrice) && (
+                      <button
+                        onClick={() => {
+                          setCustomMinPrice('');
+                          setCustomMaxPrice('');
+                          setPriceFilter('all');
+                        }}
+                        className="text-[11px] text-black/50 hover:text-black mt-1.5 underline"
+                      >
+                        Limpiar precio personalizado
+                      </button>
+                    )}
+                  </div>
+
+                  {/* 2. Nivel de Descuento */}
+                  <div>
+                    <h4 className="font-semibold text-black mb-2 flex items-center gap-1">
+                      <span>🏷️</span>
+                      <span>Descuentos & Promociones</span>
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { val: 'all', label: 'Todos' },
+                        { val: 'any', label: 'Cualquier oferta' },
+                        { val: '20plus', label: '≥ 20% OFF' },
+                        { val: '30plus', label: '≥ 30% OFF' },
+                        { val: '40plus', label: '≥ 40% OFF' },
+                      ].map((d) => (
+                        <button
+                          key={d.val}
+                          onClick={() => setDiscountFilter(d.val as DiscountFilterOption)}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
+                            discountFilter === d.val
+                              ? 'bg-black text-white'
+                              : 'bg-white hover:bg-neutral-100 text-black/70 border border-black/10'
+                          }`}
+                        >
+                          {d.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 3. Catálogo de Origen */}
+                  <div>
+                    <h4 className="font-semibold text-black mb-2 flex items-center gap-1">
+                      <span>📖</span>
+                      <span>Revista / Catálogo</span>
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { val: 'all', label: 'Todos' },
+                        { val: 'natura', label: 'Revista Natura' },
+                        { val: 'avon', label: 'Revista Avon' },
+                        { val: 'casa-estilo', label: 'Casa & Estilo' },
+                        { val: 'ciclo-14', label: 'Mi Consultoría' },
+                      ].map((c) => (
+                        <button
+                          key={c.val}
+                          onClick={() => setCatalogFilter(c.val as CatalogFilterOption)}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
+                            catalogFilter === c.val
+                              ? 'bg-black text-white'
+                              : 'bg-white hover:bg-neutral-100 text-black/70 border border-black/10'
+                          }`}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 4. Disponibilidad de Precio */}
+                  <div>
+                    <h4 className="font-semibold text-black mb-2 flex items-center gap-1">
+                      <span>👁️</span>
+                      <span>Visibilidad de Precio</span>
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { val: 'all', label: 'Todos' },
+                        { val: 'with-price', label: 'Precio publicado' },
+                        { val: 'consult', label: 'A consultar' },
+                      ].map((ps) => (
+                        <button
+                          key={ps.val}
+                          onClick={() => setPriceStatusFilter(ps.val as PriceStatusOption)}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
+                            priceStatusFilter === ps.val
+                              ? 'bg-black text-white'
+                              : 'bg-white hover:bg-neutral-100 text-black/70 border border-black/10'
+                          }`}
+                        >
+                          {ps.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Advanced panel footer */}
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-black/8 text-xs">
+                  <span className="text-black/50">
+                    {filteredProducts.length.toLocaleString('es-CL')} productos encontrados
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {advancedFiltersActiveCount > 0 && (
+                      <button
+                        onClick={() => {
+                          setDiscountFilter('all');
+                          setCatalogFilter('all');
+                          setPriceStatusFilter('all');
+                          setCustomMinPrice('');
+                          setCustomMaxPrice('');
+                          if (priceFilter === 'custom') setPriceFilter('all');
+                        }}
+                        className="text-black/60 hover:text-black underline font-medium"
+                      >
+                        Restablecer filtros avanzados
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setShowAdvancedFilters(false)}
+                      className="px-3 py-1 rounded-full bg-black text-white font-medium text-xs hover:bg-neutral-800"
+                    >
+                      Listo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Active Filter Chips Bar */}
+          {activeFilterChips.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <span className="text-xs font-semibold text-black/40 mr-1">
+                Filtros activos ({activeFiltersCount}):
+              </span>
+              {activeFilterChips.map((chip, idx) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-black/15 text-black text-xs font-medium shadow-2xs"
+                >
+                  <span>{chip.label}</span>
+                  <button
+                    onClick={chip.onRemove}
+                    className="w-4 h-4 rounded-full bg-black/5 hover:bg-black/15 text-black flex items-center justify-center text-[10px] font-bold transition-colors ml-0.5"
+                    title="Eliminar este filtro"
+                    aria-label={`Eliminar filtro ${chip.label}`}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))}
+              <button
+                onClick={resetFilters}
+                className="text-xs text-black/60 hover:text-black underline font-medium ml-1 flex items-center gap-1"
+              >
+                <RotateCcw size={12} />
+                <span>Limpiar todos ({activeFiltersCount})</span>
+              </button>
+            </div>
+          )}
 
           {/* Favorites Banner if active */}
           {showOnlyFavorites && (
@@ -746,13 +1319,7 @@ export default function App() {
                 Prueba buscando con otro término, limpiando el rango de precios o explorando otra categoría.
               </p>
               <button
-                onClick={() => {
-                  setSelectedCategory('Todos los Productos');
-                  setSelectedBrand('Todas las Marcas');
-                  setSearchQuery('');
-                  setPriceFilter('all');
-                  setShowOnlyFavorites(false);
-                }}
+                onClick={resetFilters}
                 className="px-5 py-2.5 rounded-full bg-black text-white font-medium text-xs hover:bg-neutral-800 transition-colors"
               >
                 Restablecer Filtros
@@ -767,7 +1334,7 @@ export default function App() {
                   return (
                     <div
                       key={product.id}
-                      className="group bg-white rounded-2xl border border-black/8 overflow-hidden hover:border-black/25 hover:shadow-sm transition-all duration-300 flex flex-col justify-between hover:-translate-y-0.5 relative"
+                      className="beauty-product group bg-white rounded-2xl border border-black/8 overflow-hidden hover:border-black/25 hover:shadow-sm transition-all duration-300 flex flex-col justify-between hover:-translate-y-0.5 relative"
                     >
                       {/* Favorite Button */}
                       <button
@@ -779,19 +1346,17 @@ export default function App() {
                         }`}
                         title={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
                       >
-                        <span className="text-xs">{isFav ? '★' : '☆'}</span>
+                        <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
                       </button>
 
                       {/* Image Box */}
                       <div
-                        className="relative aspect-square bg-[#F4F4F6] overflow-hidden cursor-pointer"
+                        className="beauty-product-photo relative aspect-square bg-[#F4F4F6] overflow-hidden cursor-pointer"
                         onClick={() => setQuickViewProduct(product)}
                       >
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
+                        <ProductImage
+                          product={product}
+                          className="w-full h-full group-hover:scale-105 transition-transform duration-500"
                         />
 
                         {/* Badges */}
@@ -821,11 +1386,11 @@ export default function App() {
                         <div>
                           {/* Rating & Code */}
                           <div className="flex items-center justify-between text-[11px] text-black/40 mb-1">
-                            <div className="flex items-center text-black font-medium">
+                            {product.reviewsCount > 0 && <div className="flex items-center text-black font-medium">
                               <span>★</span>
                               <span className="text-black ml-1">{product.rating}</span>
                               <span className="text-black/40 ml-0.5">({product.reviewsCount})</span>
-                            </div>
+                            </div>}
                             <span className="font-mono text-black/50">Cód: {product.code}</span>
                           </div>
 
@@ -840,7 +1405,7 @@ export default function App() {
                           {/* Prices */}
                           <div className="flex items-baseline gap-2 mb-3">
                             <span className="font-semibold text-base sm:text-lg text-black">
-                              {formatCLP(product.price)}
+                              {product.priceStatus === 'consult' ? 'Consultar en revista' : formatCLP(product.price)}
                             </span>
                             {product.originalPrice > product.price && (
                               <span className="text-xs text-black/40 line-through">
@@ -870,7 +1435,7 @@ export default function App() {
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
-                            <span>Agregar al Carrito</span>
+                            <span>{product.priceStatus === 'consult' ? 'Ver condiciones' : 'Agregar al Carrito'}</span>
                           </button>
                         </div>
                       </div>
@@ -1002,10 +1567,10 @@ export default function App() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
               <div className="aspect-square bg-[#F4F4F6] rounded-2xl overflow-hidden border border-black/10 relative">
-                <img
-                  src={quickViewProduct.image}
-                  alt={quickViewProduct.name}
-                  className="w-full h-full object-cover"
+                <ProductImage
+                  product={quickViewProduct}
+                  className="w-full h-full"
+                  loading="eager"
                 />
                 {quickViewProduct.discountPercent > 0 && (
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black text-white text-xs font-medium shadow-xs">
@@ -1029,18 +1594,18 @@ export default function App() {
                   {quickViewProduct.name}
                 </h2>
 
-                <div className="flex items-center gap-2 mb-3">
+                {quickViewProduct.reviewsCount > 0 && <div className="flex items-center gap-2 mb-3">
                   <div className="flex items-center text-black font-medium text-sm">
                     <span>★ {quickViewProduct.rating}</span>
                   </div>
                   <span className="text-xs text-black/40">
                     ({quickViewProduct.reviewsCount} opiniones)
                   </span>
-                </div>
+                </div>}
 
                 <div className="flex items-baseline gap-3 mb-4">
                   <span className="text-2xl sm:text-3xl font-black text-black">
-                    {formatCLP(quickViewProduct.price)}
+                    {quickViewProduct.priceStatus === 'consult' ? 'Consultar en revista' : formatCLP(quickViewProduct.price)}
                   </span>
                   {quickViewProduct.originalPrice > quickViewProduct.price && (
                     <span className="text-sm text-black/40 line-through">
@@ -1052,6 +1617,13 @@ export default function App() {
                 <p className="text-xs text-black/60 leading-relaxed mb-4">
                   {quickViewProduct.description}
                 </p>
+                {quickViewProduct.imageSource === 'catalog' && (
+                  <p className="text-xs text-black/50 mb-4">Imagen de referencia: página del catálogo.</p>
+                )}
+                {(quickViewProduct.sourceUrl || quickViewProduct.imageSourceUrl) && (
+                  <a href={quickViewProduct.sourceUrl || quickViewProduct.imageSourceUrl!} target="_blank" rel="noreferrer"
+                    className="inline-block text-xs underline mb-4">{quickViewProduct.sourceUrl ? 'Ver producto en el sitio oficial' : 'Ver imagen oficial'}</a>
+                )}
 
                 <div className="space-y-1.5 mb-6">
                   {quickViewProduct.benefits.map((b, i) => (
@@ -1063,7 +1635,7 @@ export default function App() {
                 </div>
 
                 <div className="space-y-2">
-                  <button
+                  {quickViewProduct.priceStatus !== 'consult' && <button
                     onClick={() => {
                       handleAddToCart(quickViewProduct);
                       setQuickViewProduct(null);
@@ -1072,7 +1644,7 @@ export default function App() {
                     className="w-full py-3 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
                     Agregar al Carrito
-                  </button>
+                  </button>}
 
                   <button
                     onClick={() => {
@@ -1162,10 +1734,9 @@ export default function App() {
                     key={item.product.id}
                     className="flex items-center gap-3 p-3 bg-[#F4F4F6] rounded-2xl border border-black/10"
                   >
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="w-16 h-16 rounded-xl object-cover border border-black/10 bg-white flex-shrink-0"
+                    <ProductImage
+                      product={item.product}
+                      className="w-16 h-16 rounded-xl border border-black/10 bg-white flex-shrink-0"
                     />
 
                     <div className="flex-1 min-w-0">
@@ -1785,7 +2356,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-white/60 leading-relaxed text-xs">
-                Plataforma oficial con más de 680 productos del Ciclo 14 / 2026 con entrega a todo Chile. Natura Cosméticos, Avon y Casa & Estilo.
+                Catálogo con {PRODUCTS.length.toLocaleString('es-CL')} productos y variantes del Ciclo 14 / 2026. Natura Cosméticos, Avon y Casa & Estilo.
               </p>
             </div>
 
@@ -1848,7 +2419,7 @@ export default function App() {
               © 2026 Natura & Avon Chile • Campaña Ciclo 14. Todos los derechos reservados.
             </div>
             <div>
-              Diseño minimalista monochrome • Inter Typography
+              Tu belleza, a tu manera.
             </div>
           </div>
         </div>

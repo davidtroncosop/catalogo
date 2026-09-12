@@ -10,9 +10,15 @@ export interface Product {
   rating: number;
   reviewsCount: number;
   image: string;
+  imageFallback?: string;
+  imageSource?: 'official' | 'catalog';
+  sourceUrl?: string | null;
+  imageSourceUrl?: string | null;
+  priceStatus?: 'catalog' | 'consult';
   catalogSlug: string;
   catalogTitle: string;
   page: number;
+  catalogPages?: number[];
   badge?: string;
   badgeColor?: string;
   description: string;
