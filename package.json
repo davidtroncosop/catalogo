@@ -11,6 +11,8 @@
     "deploy": "npm run build && wrangler pages deploy dist --project-name=catalogos-c14 --branch=main"
   },
   "dependencies": {
+    "lucide-react": "^1.45.0",
+    "motion": "^13.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

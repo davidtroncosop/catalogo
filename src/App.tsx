@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 export type { Product, CartItem, CatalogItem, OrderConfirmation } from './types';
 import type { CatalogItem, CartItem, Product, OrderConfirmation } from './types';
 import { PRODUCTS } from './data/products';
+import { HeroSection } from './HeroSection';
 
 // --- CATALOG DATA ---
 const CATALOGS: CatalogItem[] = [
@@ -390,9 +391,34 @@ export default function App() {
     return `https://wa.me/${phoneClean}?text=${encodeURIComponent(text)}`;
   };
 
+  const [isScrolledPastHero, setIsScrolledPastHero] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolledPastHero(window.scrollY > window.innerHeight * 0.65);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-stone-100 text-stone-900 selection:bg-orange-200">
-      {/* 1. ANNOUNCEMENT BAR */}
+      {/* 0. FULL-SCREEN HERO SECTION LANDING PAGE */}
+      <HeroSection
+        isScrolled={isScrolledPastHero}
+        onExploreCatalog={() => {
+          const el = document.getElementById('catalogo-store');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+        onOpenMenu={() => {
+          setActiveTab(activeTab === 'store' ? 'catalogs' : 'store');
+          const el = document.getElementById('catalogo-store');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+      />
+
+      <div id="catalogo-store">
+        {/* 1. ANNOUNCEMENT BAR */}
       <div className="bg-stone-950 text-white text-xs py-2 px-4 text-center font-medium flex items-center justify-between sm:justify-center gap-4">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
@@ -1819,6 +1845,7 @@ export default function App() {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

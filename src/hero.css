@@ -1,0 +1,470 @@
+/* Plain CSS for Hero Section - Natura & Avon Chile Ciclo 14 / 2026 */
+
+.hero-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #000000;
+  box-sizing: border-box;
+}
+
+/* 1. NAVBAR (fixed, top) */
+.hero-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.hero-navbar.hero-navbar-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-20px) !important;
+}
+
+@media (min-width: 768px) {
+  .hero-navbar {
+    padding: 24px 32px;
+  }
+}
+
+.hero-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  .hero-nav-left {
+    gap: 16px;
+  }
+}
+
+.hero-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.hero-brand-text {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero-brand-text {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #000000;
+  }
+}
+
+.hero-menu-pill {
+  display: flex;
+  align-items: center;
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 3px 12px 3px 3px;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  user-select: none;
+}
+
+.hero-menu-pill:hover {
+  transform: scale(1.03);
+  opacity: 0.92;
+}
+
+.hero-menu-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .hero-menu-circle {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.hero-menu-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+.hero-tags-pill {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero-tags-pill {
+    display: flex;
+    align-items: center;
+    background-color: #F4F4F6;
+    border-radius: 9999px;
+    padding: 7px 16px;
+    gap: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #000000;
+    user-select: none;
+  }
+}
+
+.hero-tag-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.hero-nav-right {
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.hero-right-pill {
+  display: flex;
+  align-items: center;
+  background-color: #F4F4F6;
+  border-radius: 9999px;
+  padding: 3px;
+  gap: 10px;
+  cursor: pointer;
+  border: none;
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.hero-right-pill:hover {
+  transform: scale(1.03);
+}
+
+@media (min-width: 768px) {
+  .hero-right-pill {
+    padding: 3px 14px 3px 3px;
+  }
+}
+
+.hero-grid-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-grid-circle {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.hero-right-label {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero-right-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #000000;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* 2. BACKGROUND VIDEO */
+.hero-video-wrapper {
+  position: absolute;
+  z-index: 0;
+  overflow: hidden;
+  /* Mobile: 80% width and 80% height, centered */
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 768px) {
+  .hero-video-wrapper {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 3. FOOTER CONTENT (bottom, over gradient) */
+.hero-footer {
+  position: relative;
+  z-index: 30;
+  width: 100%;
+  background: linear-gradient(to top, #ffffff 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 40px 16px 28px 16px;
+  margin-top: auto;
+}
+
+@media (min-width: 768px) {
+  .hero-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 64px 32px 36px 32px;
+  }
+}
+
+.hero-footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 740px;
+}
+
+.hero-subtitle-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-subtitle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #000000;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.hero-subtitle-text {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.hero-heading {
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #000000;
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 4.5rem);
+}
+
+@media (min-width: 768px) {
+  .hero-heading {
+    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  }
+}
+
+.hero-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.hero-btn-primary {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, opacity 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-btn-primary:hover {
+  transform: scale(1.03);
+  opacity: 0.9;
+}
+
+.hero-btn-secondary {
+  background-color: transparent;
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 9999px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-btn-secondary:hover {
+  border-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: scale(1.03);
+}
+
+.hero-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hero-tag-pill {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 11px;
+  font-weight: 500;
+  color: #000000;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  user-select: none;
+}
+
+/* Modal for "Cómo Funciona" */
+.hero-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.hero-modal-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  max-width: 480px;
+  width: 100%;
+  padding: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  font-family: 'Inter', sans-serif;
+  color: #000000;
+}
+
+.hero-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.hero-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.hero-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  color: #666666;
+}
+
+.hero-modal-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hero-modal-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hero-modal-step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-modal-step-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.hero-modal-step-desc {
+  font-size: 12px;
+  color: #666666;
+  line-height: 1.4;
+}
