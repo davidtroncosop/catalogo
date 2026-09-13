@@ -25,22 +25,25 @@ export interface TransferVerificationResult {
 }
 
 export const DEFAULT_BANK_DETAILS: BankDetails = {
-  bank: 'Banco Santander Chile',
-  accountType: 'Cuenta Corriente',
-  accountNumber: '74829104-5',
-  holderName: 'Camila Browne',
-  rut: '18.423.951-8',
-  email: 'pagos@camilabrowne.cl',
+  bank: 'Banco Santander',
+  accountType: 'Cuenta Vista',
+  accountNumber: '0 011 00 08554 9',
+  holderName: 'Camila Josefa Browne Arellano',
+  rut: '18.663.744-5',
+  email: 'cjbrowne@miuandes.cl',
 };
 
-const BANK_STORAGE_KEY = 'camila_browne_bank_details';
+const BANK_STORAGE_KEY = 'camila_browne_bank_details_v3';
 const API_KEY_STORAGE_KEY = 'camila_browne_gemini_key';
 
 export function getBankDetails(): BankDetails {
   try {
     const stored = localStorage.getItem(BANK_STORAGE_KEY);
     if (stored) {
-      return { ...DEFAULT_BANK_DETAILS, ...JSON.parse(stored) };
+      const parsed = JSON.parse(stored);
+      if (parsed.rut !== '18.423.951-8' && parsed.accountNumber !== '74829104-5') {
+        return { ...DEFAULT_BANK_DETAILS, ...parsed };
+      }
     }
   } catch (err) {
     console.error('Error reading bank details from localStorage', err);
@@ -149,7 +152,7 @@ export async function verifyTransferReceipt({
 Eres un auditor experto en validar comprobantes de transferencias bancarias en Chile (Banco Santander, BancoEstado, Banco de Chile, BCI, Scotiabank, Itaú, Falabella, Mach, Tenpo, etc.).
 
 Examina detenidamente la imagen adjunta de este pantallazo o comprobante de transferencia y verifica los siguientes datos esperados:
-- Destinatario esperado: "${bankDetails.holderName}" (RUT: "${bankDetails.rut}", Cuenta: "${bankDetails.accountNumber}")
+- Destinatario esperado: "${bankDetails.holderName}" (RUT: "${bankDetails.rut}", Cuenta: "${bankDetails.accountNumber}"). Se considera recipientValid = true si coincide el nombre (o parte reconocible como Camila Browne, Camila Josefa Browne Arellano) o el RUT ${bankDetails.rut}.
 - Monto esperado del pedido: $${expectedAmount.toLocaleString('es-CL')} CLP (valor numérico: ${expectedAmount})
 - Fecha esperada: Hoy es ${todayStr} (se aceptan transferencias realizadas hoy o en las últimas 48 horas).
 
@@ -381,7 +384,7 @@ function analyzeReceiptWithHeuristics(
 export function generateSampleReceiptImage(
   type: 'valid' | 'wrong-amount' | 'wrong-recipient',
   expectedAmount: number,
-  recipientName = 'Camila Browne'
+  recipientName = 'Camila Josefa Browne Arellano'
 ): string {
   if (typeof document === 'undefined') return '';
 
@@ -486,10 +489,10 @@ export function generateSampleReceiptImage(
   };
 
   drawRow('Destinatario', recipient, true);
-  drawRow('RUT', type === 'wrong-recipient' ? '12.345.678-9' : '18.423.951-8');
+  drawRow('RUT', type === 'wrong-recipient' ? '12.345.678-9' : '18.663.744-5');
   drawRow('Banco destino', 'Banco Santander');
-  drawRow('Tipo de cuenta', 'Cuenta Corriente');
-  drawRow('N° de cuenta', '74829104-5');
+  drawRow('Tipo de cuenta', 'Cuenta Vista');
+  drawRow('N° de cuenta', '0 011 00 08554 9');
   drawRow('Fecha y hora', `${dateFormatted} ${timeFormatted} hrs`);
   drawRow('N° de operación', folio);
 

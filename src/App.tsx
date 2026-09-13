@@ -2152,7 +2152,7 @@ export default function App() {
                     {paymentMethod === 'transfer' && (
                       <div className="mt-3 p-3 bg-white rounded-xl border border-black/10 space-y-2">
                         <p className="text-xs text-black/70 leading-relaxed">
-                          Transfiere a <strong>Camila Browne</strong> y nuestro modelo de visión validará la fecha, destinatario y monto de tu pantallazo al instante.
+                          Transfiere a <strong>Camila Josefa Browne Arellano</strong> (Santander · Cuenta Vista) y nuestro modelo de visión validará la fecha, destinatario y monto de tu pantallazo al instante.
                         </p>
                         <button
                           type="button"

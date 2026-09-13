@@ -31,8 +31,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
     const cleanBase64 = data.image.includes(',') ? data.image.split(',')[1] : data.image;
     const mime = data.mimeType || 'image/jpeg';
-    const holder = data.bankDetails?.holderName || 'Camila Browne';
-    const rut = data.bankDetails?.rut || '18.423.951-8';
+    const holder = data.bankDetails?.holderName || 'Camila Josefa Browne Arellano';
+    const rut = data.bankDetails?.rut || '18.663.744-5';
     const expectedAmount = data.expectedAmount;
     const todayStr = new Date().toLocaleDateString('es-CL', {
       day: 'numeric',
@@ -43,7 +43,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const prompt = `
 Eres un auditor experto en validar comprobantes de transferencias bancarias en Chile (Banco Santander, BancoEstado, Banco de Chile, BCI, Scotiabank, Itaú, Falabella, Mach, Tenpo, etc.).
 Examina la imagen adjunta y valida:
-- Destinatario esperado: "${holder}" (RUT: "${rut}")
+- Destinatario esperado: "${holder}" (RUT: "${rut}", o variaciones comunes como "Camila Browne", "Camila Browne Arellano", "Camila Josefa Browne", etc.). Se considera recipientValid = true si coincide el nombre (o parte reconocible como Camila Browne) o el RUT ${rut}.
 - Monto esperado del pedido: $${expectedAmount.toLocaleString('es-CL')} CLP (${expectedAmount})
 - Fecha esperada: Hoy es ${todayStr} (se aceptan transferencias emitidas hoy o en las últimas 48 horas).
 
