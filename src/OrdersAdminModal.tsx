@@ -9,6 +9,11 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
+  Lock,
+  KeyRound,
+  Eye,
+  EyeOff,
+  LogOut,
 } from 'lucide-react';
 import type { OrderConfirmation } from './types';
 import {
@@ -17,6 +22,10 @@ import {
   getGoogleSheetsWebhookUrl,
   saveGoogleSheetsWebhookUrl,
   GOOGLE_APPS_SCRIPT_CODE,
+  verifyAdminPassword,
+  saveAdminPassword,
+  isAdminSessionActive,
+  setAdminSessionActive,
 } from './services/ordersService';
 
 interface OrdersAdminModalProps {
@@ -25,6 +34,17 @@ interface OrdersAdminModalProps {
 }
 
 export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onClose }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Change password modal
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [newPasswordInput, setNewPasswordInput] = useState('');
+  const [passwordChangedSuccess, setPasswordChangedSuccess] = useState(false);
+
+  // Orders data
   const [orders, setOrders] = useState<OrderConfirmation[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('');
@@ -35,12 +55,55 @@ export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onCl
 
   useEffect(() => {
     if (isOpen) {
-      setOrders(getStoredOrders());
-      setWebhookUrl(getGoogleSheetsWebhookUrl());
+      const authActive = isAdminSessionActive();
+      setIsAuthenticated(authActive);
+      if (authActive) {
+        setOrders(getStoredOrders());
+        setWebhookUrl(getGoogleSheetsWebhookUrl());
+      }
+    } else {
+      setPasswordInput('');
+      setPasswordError(false);
+      setShowChangePassword(false);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (verifyAdminPassword(passwordInput)) {
+      setIsAuthenticated(true);
+      setAdminSessionActive(true);
+      setPasswordError(false);
+      setPasswordInput('');
+      setOrders(getStoredOrders());
+      setWebhookUrl(getGoogleSheetsWebhookUrl());
+    } else {
+      setPasswordError(true);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setAdminSessionActive(false);
+    setPasswordInput('');
+  };
+
+  const handleChangePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPasswordInput.trim().length >= 4) {
+      saveAdminPassword(newPasswordInput.trim());
+      setPasswordChangedSuccess(true);
+      setTimeout(() => {
+        setPasswordChangedSuccess(false);
+        setShowChangePassword(false);
+        setNewPasswordInput('');
+      }, 2000);
+    } else {
+      alert('La nueva contraseña debe tener al menos 4 caracteres.');
+    }
+  };
 
   const handleSaveWebhook = () => {
     saveGoogleSheetsWebhookUrl(webhookUrl);
@@ -54,6 +117,86 @@ export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onCl
     setTimeout(() => setCopiedScript(false), 2500);
   };
 
+  // 1. PASSWORD GATE SCREEN (If not authenticated)
+  if (!isAuthenticated) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-black/10 animate-scale-in relative text-center space-y-5">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black/60 hover:text-black transition-colors"
+          >
+            <X size={18} />
+          </button>
+
+          <div className="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center mx-auto shadow-md">
+            <Lock size={26} className="text-amber-400" />
+          </div>
+
+          <div>
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-widest block mb-1">
+              Acceso Exclusivo Camila Browne
+            </span>
+            <h3 className="text-xl font-black text-black">
+              Planilla de Ventas y Compradores
+            </h3>
+            <p className="text-xs text-black/55 mt-1.5 leading-relaxed">
+              Ingresa tu contraseña de administradora para ver el listado de clientes, direcciones de entrega y descargar las planillas en Excel.
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-3.5 text-left">
+            <div>
+              <label className="block text-xs font-bold text-black/80 mb-1">
+                Contraseña de Administradora:
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={passwordInput}
+                  onChange={(e) => {
+                    setPasswordInput(e.target.value);
+                    setPasswordError(false);
+                  }}
+                  autoFocus
+                  placeholder="Ingresa tu contraseña..."
+                  className={`w-full pl-3.5 pr-10 py-2.5 bg-neutral-50 border rounded-xl text-sm text-black focus:outline-none focus:ring-2 focus:ring-black ${
+                    passwordError ? 'border-red-500 bg-red-50/50' : 'border-black/15'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black/40 hover:text-black"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="text-xs text-red-600 font-medium mt-1">
+                  Contraseña incorrecta. Por favor intenta de nuevo.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 rounded-xl bg-black hover:bg-neutral-800 text-white font-bold text-sm shadow-xs transition-all flex items-center justify-center gap-2"
+            >
+              <Lock size={15} />
+              <span>Ingresar al Panel de Ventas</span>
+            </button>
+          </form>
+
+          <div className="p-3 bg-neutral-50 rounded-xl border border-black/5 text-[11px] text-black/50 leading-relaxed text-center">
+            💡 Contraseña por defecto: <strong className="font-mono text-black font-bold">camila</strong> (puedes cambiarla una vez que ingreses).
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Filtered orders
   const filteredOrders = orders.filter((o) => {
     const q = searchQuery.toLowerCase();
     return (
@@ -67,6 +210,7 @@ export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onCl
 
   const totalSales = orders.reduce((acc, curr) => acc + curr.total, 0);
 
+  // 2. MAIN ADMIN DASHBOARD (When authenticated)
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
       <div className="bg-white rounded-3xl max-w-5xl w-full shadow-2xl border border-black/10 animate-scale-in relative max-h-[94vh] flex flex-col my-auto overflow-hidden">
@@ -101,6 +245,22 @@ export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onCl
               <span>Descargar Excel (.csv)</span>
             </button>
             <button
+              onClick={() => setShowChangePassword(!showChangePassword)}
+              className="p-2 text-black/60 hover:text-black hover:bg-black/5 rounded-xl text-xs font-medium border border-black/10 flex items-center gap-1"
+              title="Cambiar contraseña de acceso"
+            >
+              <KeyRound size={15} />
+              <span className="hidden md:inline">Clave</span>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="p-2 text-red-600 hover:bg-red-50 rounded-xl text-xs font-medium border border-red-200 flex items-center gap-1"
+              title="Bloquear sesión / Salir"
+            >
+              <LogOut size={15} />
+              <span className="hidden md:inline">Salir</span>
+            </button>
+            <button
               onClick={onClose}
               className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black/60 hover:text-black transition-colors"
             >
@@ -111,6 +271,39 @@ export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onCl
 
         {/* Content Body */}
         <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+          {/* Change Password Form (Accordion) */}
+          {showChangePassword && (
+            <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-2 animate-fade-in text-xs">
+              <div className="flex items-center justify-between font-bold text-amber-950">
+                <div className="flex items-center gap-1.5">
+                  <KeyRound size={15} className="text-amber-700" />
+                  <span>Cambiar Contraseña de Acceso al Panel</span>
+                </div>
+                <button
+                  onClick={() => setShowChangePassword(false)}
+                  className="text-amber-800 hover:text-black"
+                >
+                  ✕
+                </button>
+              </div>
+              <form onSubmit={handleChangePassword} className="flex gap-2 pt-1">
+                <input
+                  type="text"
+                  value={newPasswordInput}
+                  onChange={(e) => setNewPasswordInput(e.target.value)}
+                  placeholder="Nueva contraseña (mínimo 4 caracteres)..."
+                  className="flex-1 px-3 py-2 bg-white border border-black/15 rounded-lg text-xs font-mono text-black focus:outline-none focus:ring-1 focus:ring-black"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-black hover:bg-neutral-800 text-white font-bold rounded-lg text-xs"
+                >
+                  {passwordChangedSuccess ? '✓ Cambiada con Éxito' : 'Guardar Nueva Clave'}
+                </button>
+              </form>
+            </div>
+          )}
+
           {/* Action Row & Search */}
           <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
             <div className="relative flex-1">

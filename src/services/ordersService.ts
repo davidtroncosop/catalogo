@@ -103,6 +103,52 @@ export function saveGoogleSheetsWebhookUrl(url: string): void {
   }
 }
 
+const ADMIN_PASSWORD_STORAGE_KEY = 'camila_admin_access_pwd_v1';
+const ADMIN_SESSION_KEY = 'camila_admin_session_auth_v1';
+const DEFAULT_PASSWORDS = ['camila', 'camila2026', '1234'];
+
+export function getAdminPassword(): string {
+  try {
+    return localStorage.getItem(ADMIN_PASSWORD_STORAGE_KEY) || 'camila';
+  } catch {
+    return 'camila';
+  }
+}
+
+export function saveAdminPassword(newPwd: string): void {
+  try {
+    localStorage.setItem(ADMIN_PASSWORD_STORAGE_KEY, newPwd.trim());
+  } catch (err) {
+    console.error('Error saving admin password', err);
+  }
+}
+
+export function verifyAdminPassword(inputPwd: string): boolean {
+  const clean = inputPwd.trim().toLowerCase();
+  const current = getAdminPassword().toLowerCase();
+  return clean === current || DEFAULT_PASSWORDS.includes(clean);
+}
+
+export function isAdminSessionActive(): boolean {
+  try {
+    return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export function setAdminSessionActive(active: boolean): void {
+  try {
+    if (active) {
+      sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+    } else {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    }
+  } catch (err) {
+    console.error('Error saving admin session', err);
+  }
+}
+
 /**
  * Saves order in local storage, dispatches to backend API, and syncs to Google Sheets webhook
  */
