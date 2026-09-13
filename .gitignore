@@ -27,3 +27,5 @@ dist-ssr
 .wrangler
 inputs/
 tmp/
+.env
+.env.*

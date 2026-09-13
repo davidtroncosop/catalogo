@@ -1,4 +1,6 @@
 interface Env {
+  API_MINIMAX?: string;
+  MINIMAX_API_KEY?: string;
   GEMINI_API_KEY?: string;
   AI?: any;
 }
@@ -11,6 +13,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       image: string;
       mimeType?: string;
       expectedAmount: number;
+      apiKey?: string;
       bankDetails: {
         holderName: string;
         rut: string;
@@ -37,17 +40,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       year: 'numeric',
     });
 
-    const apiKey = env.GEMINI_API_KEY;
-
-    if (apiKey) {
-      const prompt = `
+    const prompt = `
 Eres un auditor experto en validar comprobantes de transferencias bancarias en Chile (Banco Santander, BancoEstado, Banco de Chile, BCI, Scotiabank, Itaú, Falabella, Mach, Tenpo, etc.).
 Examina la imagen adjunta y valida:
 - Destinatario esperado: "${holder}" (RUT: "${rut}")
 - Monto esperado del pedido: $${expectedAmount.toLocaleString('es-CL')} CLP (${expectedAmount})
-- Fecha esperada: Hoy es ${todayStr} (se aceptan comprobantes de hoy o últimas 48 horas).
+- Fecha esperada: Hoy es ${todayStr} (se aceptan transferencias emitidas hoy o en las últimas 48 horas).
 
-Responde ÚNICAMENTE un JSON válido sin markdown:
+Responde ÚNICAMENTE un objeto JSON válido con estas claves exactas (sin formato markdown ni texto extra):
 {
   "bank": string,
   "dateText": string,
@@ -62,65 +62,152 @@ Responde ÚNICAMENTE un JSON válido sin markdown:
 }
 `;
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-        {
+    // 1. Check for MiniMax API key (from Cloudflare secrets or passed directly)
+    const minimaxKey =
+      env.API_MINIMAX ||
+      env.MINIMAX_API_KEY ||
+      (data.apiKey && data.apiKey.startsWith('sk-') ? data.apiKey : undefined);
+
+    if (minimaxKey) {
+      try {
+        const imageUrl = `data:${mime};base64,${cleanBase64}`;
+        const minimaxRes = await fetch('https://api.minimaxi.chat/v1/chat/completions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            Authorization: `Bearer ${minimaxKey}`,
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
-            contents: [
+            model: 'MiniMax-Text-01',
+            messages: [
               {
-                parts: [
-                  { text: prompt },
-                  {
-                    inlineData: {
-                      mimeType: mime,
-                      data: cleanBase64,
-                    },
-                  },
+                role: 'user',
+                content: [
+                  { type: 'text', text: prompt },
+                  { type: 'image_url', image_url: { url: imageUrl } },
                 ],
               },
             ],
-            generationConfig: {
-              temperature: 0.1,
-              responseMimeType: 'application/json',
-            },
+            temperature: 0.1,
           }),
-        }
-      );
+        });
 
-      if (response.ok) {
-        const json = await response.json();
-        const candidate = json.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (candidate) {
-          const parsed = JSON.parse(candidate);
-          const isValid =
-            Boolean(parsed.dateValid) &&
-            Boolean(parsed.recipientValid) &&
-            Boolean(parsed.amountValid);
+        if (minimaxRes.ok) {
+          const json = await minimaxRes.json();
+          const content = json.choices?.[0]?.message?.content;
+          if (content) {
+            const clean = content.replace(/```json/gi, '').replace(/```/g, '').trim();
+            const parsed = JSON.parse(clean);
+            const isValid =
+              Boolean(parsed.dateValid) &&
+              Boolean(parsed.recipientValid) &&
+              Boolean(parsed.amountValid);
 
-          return new Response(
-            JSON.stringify({
-              isValid,
-              bank: parsed.bank || data.bankDetails?.bank || 'Banco en Chile',
-              dateText: parsed.dateText || todayStr,
-              dateValid: Boolean(parsed.dateValid),
-              recipientText: parsed.recipientText || 'No identificado',
-              recipientValid: Boolean(parsed.recipientValid),
-              amountDetected: Number(parsed.amountDetected) || 0,
-              amountValid: Boolean(parsed.amountValid),
-              transactionId: parsed.transactionId || 'N/A',
-              confidence: Math.min(100, Math.max(0, Number(parsed.confidence) || 90)),
-              analysisNotes: parsed.analysisNotes || 'Verificación completada por servidor Gemini Vision.',
-              modelUsed: 'Cloudflare Pages Functions + Google Gemini 2.0 Flash Vision',
-            }),
-            { headers: { 'Content-Type': 'application/json' } }
-          );
+            let confidence = Number(parsed.confidence) || 0.95;
+            if (confidence <= 1) confidence = Math.round(confidence * 100);
+
+            return new Response(
+              JSON.stringify({
+                isValid,
+                bank: parsed.bank || data.bankDetails?.bank || 'Banco en Chile',
+                dateText: parsed.dateText || todayStr,
+                dateValid: Boolean(parsed.dateValid),
+                recipientText: parsed.recipientText || 'No identificado',
+                recipientValid: Boolean(parsed.recipientValid),
+                amountDetected: Number(parsed.amountDetected) || 0,
+                amountValid: Boolean(parsed.amountValid),
+                transactionId: parsed.transactionId || 'N/A',
+                confidence: Math.min(100, Math.max(0, confidence)),
+                analysisNotes:
+                  parsed.analysisNotes ||
+                  (isValid
+                    ? 'Comprobante verificado exitosamente por MiniMax AI Vision.'
+                    : 'Se detectaron discrepancias en los datos del comprobante.'),
+                modelUsed: 'MiniMax-Text-01 Multimodal Vision',
+              }),
+              { headers: { 'Content-Type': 'application/json' } }
+            );
+          }
+        } else {
+          console.warn('MiniMax request failed:', minimaxRes.status, await minimaxRes.text());
         }
+      } catch (mmErr) {
+        console.warn('MiniMax call exception:', mmErr);
       }
     }
 
-    // If Cloudflare Workers AI is available in env.AI
+    // 2. Check for Gemini API key
+    const geminiKey =
+      env.GEMINI_API_KEY ||
+      (data.apiKey && data.apiKey.startsWith('AIza') ? data.apiKey : undefined);
+
+    if (geminiKey) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    { text: prompt },
+                    {
+                      inlineData: {
+                        mimeType: mime,
+                        data: cleanBase64,
+                      },
+                    },
+                  ],
+                },
+              ],
+              generationConfig: {
+                temperature: 0.1,
+                responseMimeType: 'application/json',
+              },
+            }),
+          }
+        );
+
+        if (response.ok) {
+          const json = await response.json();
+          const candidate = json.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (candidate) {
+            const parsed = JSON.parse(candidate);
+            const isValid =
+              Boolean(parsed.dateValid) &&
+              Boolean(parsed.recipientValid) &&
+              Boolean(parsed.amountValid);
+
+            let confidence = Number(parsed.confidence) || 0.95;
+            if (confidence <= 1) confidence = Math.round(confidence * 100);
+
+            return new Response(
+              JSON.stringify({
+                isValid,
+                bank: parsed.bank || data.bankDetails?.bank || 'Banco en Chile',
+                dateText: parsed.dateText || todayStr,
+                dateValid: Boolean(parsed.dateValid),
+                recipientText: parsed.recipientText || 'No identificado',
+                recipientValid: Boolean(parsed.recipientValid),
+                amountDetected: Number(parsed.amountDetected) || 0,
+                amountValid: Boolean(parsed.amountValid),
+                transactionId: parsed.transactionId || 'N/A',
+                confidence: Math.min(100, Math.max(0, confidence)),
+                analysisNotes: parsed.analysisNotes || 'Verificación completada por Google Gemini Vision.',
+                modelUsed: 'Google Gemini 2.0 Flash Vision',
+              }),
+              { headers: { 'Content-Type': 'application/json' } }
+            );
+          }
+        }
+      } catch (gemErr) {
+        console.warn('Gemini call exception:', gemErr);
+      }
+    }
+
+    // 3. Fallback to Cloudflare Workers AI if available
     if (env.AI) {
       try {
         const binaryString = atob(cleanBase64);
@@ -172,3 +259,4 @@ Responde ÚNICAMENTE un JSON válido sin markdown:
     );
   }
 };
+

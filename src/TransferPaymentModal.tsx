@@ -11,7 +11,6 @@ import {
   Settings,
   ShieldCheck,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 import type {
   BankDetails,
@@ -246,37 +245,33 @@ Monto exacto a transferir: ${formatCLP(amount)}`;
                 </button>
               </div>
 
-              {/* Gemini API Key */}
+              {/* MiniMax / Gemini API Key */}
               <div>
-                <label className="block font-semibold text-black mb-1">
-                  Google Gemini API Key (Opcional para visión neural avanzada):
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-semibold text-black">
+                    Motor IA de Visión (MiniMax AI / Gemini):
+                  </label>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                    ✓ Servidor Cloudflare con MiniMax Vision Activo
+                  </span>
+                </div>
                 <div className="flex gap-2">
                   <input
                     type="password"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="AIzaSy..."
+                    placeholder="sk-cp-... (MiniMax) o AIzaSy... (Gemini)"
                     className="flex-1 px-3 py-1.5 bg-white border border-black/15 rounded-lg text-xs font-mono text-black focus:outline-none focus:ring-1 focus:ring-black"
                   />
                   <button
                     onClick={handleSaveApiKey}
-                    className="px-3 py-1.5 bg-black hover:bg-neutral-800 text-white rounded-lg font-medium"
+                    className="px-3 py-1.5 bg-black hover:bg-neutral-800 text-white rounded-lg font-medium text-xs"
                   >
                     {apiKeySaved ? '✓ Guardada' : 'Guardar'}
                   </button>
                 </div>
                 <div className="flex items-center justify-between mt-1 text-[11px] text-black/50">
-                  <span>Si no configuras clave, se usa el analizador inteligente de comprobantes chilenos.</span>
-                  <a
-                    href="https://aistudio.google.com/app/apikey"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline hover:text-black flex items-center gap-1 font-medium"
-                  >
-                    <span>Obtener clave gratis</span>
-                    <ExternalLink size={10} />
-                  </a>
+                  <span>El servidor valida automáticamente con MiniMax Vision. Puedes sobreescribir con tu propia clave.</span>
                 </div>
               </div>
 
