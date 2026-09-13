@@ -582,7 +582,7 @@ export default function App() {
     if (order.discount > 0) text += `\n🏷️ *Descuento:* -${formatCLP(order.discount)}`;
     if (order.shippingFee > 0) text += `\n🚚 *Envío:* ${formatCLP(order.shippingFee)}`;
     text += `\n💰 *TOTAL A PAGAR:* ${formatCLP(order.total)}\n\n`;
-    text += `⭐ *¿Cómo fue tu experiencia?* Déjanos tu opinión en el catálogo:\nhttps://catalogos-c14.pages.dev/#resenas\n\n`;
+    text += `⭐ *¿Cómo fue tu experiencia?* Déjanos tu opinión en el catálogo:\nhttps://camilabrownecatalogo.pages.dev/#resenas\n\n`;
     text += `✨ _Generado desde el Catálogo Camila Browne (Natura & Avon Chile)_`;
 
     return `https://wa.me/${phoneClean}?text=${encodeURIComponent(text)}`;
