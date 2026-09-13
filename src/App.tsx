@@ -5,9 +5,10 @@ import { PRODUCTS } from './data/products';
 import { HeroSection } from './HeroSection';
 import { ProductImage } from './ProductImage';
 import { CategoryDiscovery } from './CategoryDiscovery';
-import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp, Sparkles, FileSpreadsheet } from 'lucide-react';
+import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp, Sparkles, FileSpreadsheet, Star } from 'lucide-react';
 import { TransferPaymentModal } from './TransferPaymentModal';
 import { OrdersAdminModal } from './OrdersAdminModal';
+import { ReviewsSection, TrustReviewsBadge } from './ReviewsSection';
 import { recordNewOrder } from './services/ordersService';
 import type { TransferVerificationResult } from './services/transferVerifier';
 import './storefront.css';
@@ -563,7 +564,7 @@ export default function App() {
     text += `🔖 *Orden:* #${order.orderNumber}\n`;
     text += `👤 *Cliente:* ${order.customerName}\n`;
     text += `📍 *Entrega:* ${order.shippingType === 'delivery' ? `Domicilio en ${order.address}, ${order.city}` : 'Retiro coordinado'}\n`;
-    text += `💳 *Método de Pago:* ${order.paymentMethod === 'webpay' ? 'Webpay Plus' : order.paymentMethod === 'transfer' ? 'Transferencia Bancaria' : 'Coordinar con Consultora'}\n`;
+    text += `💳 *Método de Pago:* ${order.paymentMethod === 'transfer' ? 'Transferencia Bancaria (Santander)' : 'Coordinar con Consultora'}\n`;
 
     if (order.transferVerification) {
       text += `🤖 *Verificación IA:* ✅ Comprobante de transferencia validado con éxito\n`;
@@ -581,6 +582,7 @@ export default function App() {
     if (order.discount > 0) text += `\n🏷️ *Descuento:* -${formatCLP(order.discount)}`;
     if (order.shippingFee > 0) text += `\n🚚 *Envío:* ${formatCLP(order.shippingFee)}`;
     text += `\n💰 *TOTAL A PAGAR:* ${formatCLP(order.total)}\n\n`;
+    text += `⭐ *¿Cómo fue tu experiencia?* Déjanos tu opinión en el catálogo:\nhttps://catalogos-c14.pages.dev/#resenas\n\n`;
     text += `✨ _Generado desde el Catálogo Camila Browne (Natura & Avon Chile)_`;
 
     return `https://wa.me/${phoneClean}?text=${encodeURIComponent(text)}`;
@@ -760,7 +762,14 @@ export default function App() {
     <div className="beauty-store min-h-screen flex flex-col text-black">
       <div id="catalogo-store">
         {/* 1. ANNOUNCEMENT BAR */}
-      <div className="beauty-announcement">Un nuevo ciclo para descubrir tus favoritos · Catálogo Camila Browne</div>
+        <div className="beauty-announcement flex items-center justify-center gap-2 flex-wrap text-center">
+          <span>Un nuevo ciclo para descubrir tus favoritos · Catálogo Camila Browne</span>
+          <span className="hidden sm:inline text-black/30">·</span>
+          <span className="inline-flex items-center gap-1 font-bold text-amber-950">
+            <span>⭐ 4.9/5 en satisfacción</span>
+            <span className="hidden md:inline text-amber-900/80">(+250 clientas)</span>
+          </span>
+        </div>
 
       {/* 2. NAVBAR */}
       <header className="beauty-header sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-black/8 shadow-sm">
@@ -867,6 +876,20 @@ export default function App() {
             >
               <FileSpreadsheet size={16} className="text-emerald-700" />
               <span className="hidden md:inline">Ventas & Excel</span>
+            </button>
+
+            {/* Customer Reviews quick button */}
+            <button
+              onClick={() => {
+                if (activeTab !== 'store') setActiveTab('store');
+                document.getElementById('seccion-resenas')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="px-3 py-2 rounded-full text-xs font-medium border border-black/10 bg-white hover:bg-[#F4F4F6] text-black transition-all flex items-center gap-1.5"
+              title="Ver opiniones de clientas (4.9 estrellas)"
+            >
+              <Star size={15} className="fill-amber-400 text-amber-400" />
+              <span className="font-bold">4.9</span>
+              <span className="hidden lg:inline text-black/60">Reseñas</span>
             </button>
 
             {/* Shopping Cart Button */}
@@ -1620,6 +1643,11 @@ export default function App() {
         </main>
       )}
 
+      {/* 5.5 CUSTOMER REVIEWS & TESTIMONIALS SECTION */}
+      <div id="seccion-resenas">
+        <ReviewsSection />
+      </div>
+
       {/* 6. QUICK VIEW MODAL */}
       {quickViewProduct && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -1915,6 +1943,9 @@ export default function App() {
                   <Sparkles size={14} className="text-amber-500" />
                   <span>Pagar con Transferencia Bancaria (Validación IA)</span>
                 </button>
+
+                {/* Sello de confianza social */}
+                <TrustReviewsBadge className="mt-2.5" />
               </div>
             )}
           </div>
@@ -2225,6 +2256,9 @@ export default function App() {
                     </span>
                   </button>
                 </div>
+
+                {/* Sello de confianza en el checkout */}
+                <TrustReviewsBadge className="mt-3" />
               </div>
             )}
           </div>
@@ -2309,6 +2343,19 @@ export default function App() {
               >
                 <span>📲 Compartir Comprobante por WhatsApp</span>
               </a>
+              <button
+                onClick={() => {
+                  setConfirmedOrder(null);
+                  if (activeTab !== 'store') setActiveTab('store');
+                  setTimeout(() => {
+                    document.getElementById('seccion-resenas')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 120);
+                }}
+                className="w-full py-2.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <Star size={14} className="fill-amber-400 text-amber-400" />
+                <span>¿Cómo fue tu experiencia? Déjanos una reseña ⭐</span>
+              </button>
               <button
                 onClick={() => setConfirmedOrder(null)}
                 className="w-full py-2.5 rounded-full border border-black/15 text-black font-medium text-xs hover:bg-[#F4F4F6]"
@@ -2524,6 +2571,17 @@ export default function App() {
                 <li>✓ Despacho rápido a todo Chile</li>
                 <li>✓ Garantía de Satisfacción Total</li>
                 <li>✓ Pagos encriptados y seguros</li>
+                <li>
+                  <button
+                    onClick={() => {
+                      if (activeTab !== 'store') setActiveTab('store');
+                      document.getElementById('seccion-resenas')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="hover:text-amber-300 transition-colors flex items-center gap-1 text-left text-amber-400 font-medium"
+                  >
+                    <span>⭐ 4.9/5 Reseñas de Clientas</span>
+                  </button>
+                </li>
               </ul>
             </div>
 
