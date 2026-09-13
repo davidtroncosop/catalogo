@@ -1889,6 +1889,7 @@ export default function App() {
                 {/* Transfer with AI verification button */}
                 <button
                   onClick={() => {
+                    setIsCartOpen(false);
                     setIsTransferModalOpen(true);
                   }}
                   className="w-full py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
@@ -2318,13 +2319,15 @@ export default function App() {
       )}
 
       {/* 9.1 TRANSFER PAYMENT & AI VERIFICATION MODAL */}
-      <TransferPaymentModal
-        isOpen={isTransferModalOpen}
-        onClose={() => setIsTransferModalOpen(false)}
-        amount={finalTotal}
-        cartItemsCount={totalCartCount}
-        onConfirmOrder={handleConfirmTransferOrder}
-      />
+      {isTransferModalOpen && (
+        <TransferPaymentModal
+          isOpen={isTransferModalOpen}
+          onClose={() => setIsTransferModalOpen(false)}
+          amount={finalTotal}
+          cartItemsCount={totalCartCount}
+          onConfirmOrder={handleConfirmTransferOrder}
+        />
+      )}
 
       {/* 10. CATALOG VIEWER */}
       {activeCatalog && (

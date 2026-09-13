@@ -183,6 +183,8 @@ Monto exacto a transferir: ${formatCLP(amount)}`;
     setTimeout(() => setApiKeySaved(false), 2400);
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-black/10 animate-scale-in relative max-h-[94vh] flex flex-col my-auto overflow-hidden">
