@@ -63,4 +63,12 @@ export interface OrderConfirmation {
   total: number;
   items: CartItem[];
   date: string;
+  transferVerification?: {
+    bank: string;
+    dateText: string;
+    transactionId: string;
+    amountDetected: number;
+    recipientText: string;
+    modelUsed?: string;
+  };
 }

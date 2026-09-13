@@ -5,7 +5,9 @@ import { PRODUCTS } from './data/products';
 import { HeroSection } from './HeroSection';
 import { ProductImage } from './ProductImage';
 import { CategoryDiscovery } from './CategoryDiscovery';
-import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { TransferPaymentModal } from './TransferPaymentModal';
+import type { TransferVerificationResult } from './services/transferVerifier';
 import './storefront.css';
 
 export type SortOption =
@@ -207,8 +209,9 @@ export default function App() {
   const [couponError, setCouponError] = useState<string>('');
   const [couponSuccess, setCouponSuccess] = useState<string>('');
 
-  // Checkout
+  // Checkout & Transfer Modal
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState<boolean>(false);
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
   const [customerName, setCustomerName] = useState<string>('');
   const [customerRut, setCustomerRut] = useState<string>('');
@@ -468,7 +471,7 @@ export default function App() {
 
   // Lock scroll
   useEffect(() => {
-    if (activeCatalog || isCartOpen || isCheckoutOpen || quickViewProduct || confirmedOrder) {
+    if (activeCatalog || isCartOpen || isCheckoutOpen || quickViewProduct || confirmedOrder || isTransferModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -476,18 +479,18 @@ export default function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [activeCatalog, isCartOpen, isCheckoutOpen, quickViewProduct, confirmedOrder]);
+  }, [activeCatalog, isCartOpen, isCheckoutOpen, quickViewProduct, confirmedOrder, isTransferModalOpen]);
 
-  // Complete Order
+  // Complete Order via Regular Checkout
   const handleCompleteOrder = () => {
     const orderId = `ORD-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const newOrder: OrderConfirmation = {
       orderNumber: orderId,
-      customerName: customerName.trim() || 'Cliente Ciclo 14',
+      customerName: customerName.trim() || 'Cliente Catálogo Camila Browne',
       customerPhone: customerPhone.trim() || '+56912345678',
       customerEmail: customerEmail.trim() || 'cliente@ejemplo.cl',
       shippingType,
-      address: shippingAddress.trim() || 'Retiro coordinado con Consultora',
+      address: shippingAddress.trim() || 'Retiro coordinado con Camila Browne',
       city: `${shippingCommune}, ${shippingRegion}`,
       paymentMethod,
       subtotal: cartSubtotal,
@@ -509,14 +512,64 @@ export default function App() {
     setCart([]);
   };
 
+  // Complete Order via AI-Verified Bank Transfer
+  const handleConfirmTransferOrder = (verification: TransferVerificationResult) => {
+    const orderId = `ORD-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newOrder: OrderConfirmation = {
+      orderNumber: orderId,
+      customerName: customerName.trim() || 'Cliente Catálogo Camila Browne',
+      customerPhone: customerPhone.trim() || '+56912345678',
+      customerEmail: customerEmail.trim() || 'cliente@ejemplo.cl',
+      shippingType,
+      address: shippingAddress.trim() || 'Retiro coordinado con Camila Browne',
+      city: `${shippingCommune}, ${shippingRegion}`,
+      paymentMethod: 'transfer',
+      subtotal: cartSubtotal,
+      discount: discountAmount,
+      shippingFee,
+      total: finalTotal,
+      items: [...cart],
+      date: new Date().toLocaleDateString('es-CL', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      transferVerification: {
+        bank: verification.bank,
+        dateText: verification.dateText,
+        transactionId: verification.transactionId,
+        amountDetected: verification.amountDetected,
+        recipientText: verification.recipientText,
+        modelUsed: verification.modelUsed,
+      },
+    };
+
+    setConfirmedOrder(newOrder);
+    setIsTransferModalOpen(false);
+    setIsCartOpen(false);
+    setIsCheckoutOpen(false);
+    setCart([]);
+    triggerToast('✓ ¡Transferencia verificada y pedido confirmado con éxito!');
+  };
+
   const buildWhatsAppOrderLink = (order: OrderConfirmation) => {
     const phoneClean = order.customerPhone.replace(/[^0-9]/g, '');
-    let text = `🛍️ *¡Hola! Te comparto mi pedido confirmado en el Ecommerce Ciclo 14:*\n\n`;
+    let text = `🛍️ *¡Hola Camila! Te comparto mi pedido confirmado en tu Catálogo Digital:*\n\n`;
     text += `🔖 *Orden:* #${order.orderNumber}\n`;
     text += `👤 *Cliente:* ${order.customerName}\n`;
-    text += `📍 *Entrega:* ${order.shippingType === 'delivery' ? `Domicilio en ${order.address}, ${order.city}` : 'Retiro con Consultora'}\n`;
-    text += `💳 *Método de Pago:* ${order.paymentMethod === 'webpay' ? 'Webpay Plus' : order.paymentMethod === 'transfer' ? 'Transferencia Bancaria' : 'Coordinar con Consultora'}\n\n`;
-    text += `📦 *Detalle de Productos:*\n`;
+    text += `📍 *Entrega:* ${order.shippingType === 'delivery' ? `Domicilio en ${order.address}, ${order.city}` : 'Retiro coordinado'}\n`;
+    text += `💳 *Método de Pago:* ${order.paymentMethod === 'webpay' ? 'Webpay Plus' : order.paymentMethod === 'transfer' ? 'Transferencia Bancaria' : 'Coordinar con Consultora'}\n`;
+
+    if (order.transferVerification) {
+      text += `🤖 *Verificación IA:* ✅ Comprobante de transferencia validado con éxito\n`;
+      text += `🏦 *Banco:* ${order.transferVerification.bank}\n`;
+      text += `🔢 *N° Operación / Folio:* ${order.transferVerification.transactionId}\n`;
+      text += `📅 *Fecha Transferencia:* ${order.transferVerification.dateText}\n`;
+      text += `💵 *Monto Transferido:* ${formatCLP(order.transferVerification.amountDetected)}\n`;
+    }
+    text += `\n📦 *Detalle de Productos:*\n`;
 
     order.items.forEach((item, idx) => {
       text += `${idx + 1}. *${item.product.name}* [Cód: ${item.product.code}] x${item.quantity} = ${formatCLP(item.product.price * item.quantity)}\n`;
@@ -1833,14 +1886,29 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Transfer with AI verification button */}
+                <button
+                  onClick={() => {
+                    setIsTransferModalOpen(true);
+                  }}
+                  className="w-full py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
+                >
+                  <Sparkles size={16} className="text-amber-300 flex-shrink-0" />
+                  <span>Pagar con Transferencia (Validación IA)</span>
+                  <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full uppercase tracking-wider font-mono">
+                    Instantáneo
+                  </span>
+                </button>
+
+                {/* Other payment methods */}
                 <button
                   onClick={() => {
                     setIsCartOpen(false);
                     setIsCheckoutOpen(true);
                   }}
-                  className="w-full py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full py-2.5 rounded-full bg-white hover:bg-neutral-100 border border-black/15 text-black font-medium text-xs flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <span>Continuar a Pagar</span>
+                  <span>Otros medios de pago (Webpay, Tarjetas)</span>
                   <span>→</span>
                 </button>
               </div>
@@ -2064,16 +2132,42 @@ export default function App() {
 
                   <div
                     onClick={() => setPaymentMethod('transfer')}
-                    className={`p-3.5 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${
+                    className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
                       paymentMethod === 'transfer'
                         ? 'border-black bg-[#F4F4F6]'
                         : 'border-black/10 hover:bg-[#F4F4F6]'
                     }`}
                   >
-                    <div>
-                      <div className="font-extrabold text-sm text-black">🏦 Transferencia Bancaria Directa</div>
-                      <div className="text-xs text-black/50">Banco Santander / Estado - Datos automáticos</div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-extrabold text-sm text-black">🏦 Transferencia Bancaria Directa</div>
+                        <div className="text-xs text-black/50">Banco Santander · Verificación automática con IA</div>
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                        <Sparkles size={11} />
+                        <span>IA Vision</span>
+                      </span>
                     </div>
+
+                    {paymentMethod === 'transfer' && (
+                      <div className="mt-3 p-3 bg-white rounded-xl border border-black/10 space-y-2">
+                        <p className="text-xs text-black/70 leading-relaxed">
+                          Transfiere a <strong>Camila Browne</strong> y nuestro modelo de visión validará la fecha, destinatario y monto de tu pantallazo al instante.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsCheckoutOpen(false);
+                            setIsTransferModalOpen(true);
+                          }}
+                          className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all"
+                        >
+                          <Sparkles size={14} className="text-amber-300" />
+                          <span>Pagar y Validar Comprobante con IA</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div
@@ -2165,6 +2259,42 @@ export default function App() {
                 <span>Total Pagado:</span>
                 <span className="font-black text-black text-sm">{formatCLP(confirmedOrder.total)}</span>
               </div>
+
+              {confirmedOrder.transferVerification && (
+                <div className="pt-2.5 border-t border-black/10 mt-2 text-xs space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-emerald-800 flex items-center gap-1">
+                      <Sparkles size={12} className="text-amber-500" />
+                      Transferencia Validada con IA
+                    </span>
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                      ✓ Aprobado
+                    </span>
+                  </div>
+                  {confirmedOrder.transferVerification.bank && (
+                    <div className="flex justify-between text-black/60">
+                      <span>Banco Emisor:</span>
+                      <span className="font-semibold text-black">{confirmedOrder.transferVerification.bank}</span>
+                    </div>
+                  )}
+                  {confirmedOrder.transferVerification.transactionId && (
+                    <div className="flex justify-between text-black/60">
+                      <span>Folio / Operación:</span>
+                      <span className="font-mono text-black font-semibold">{confirmedOrder.transferVerification.transactionId}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-black/60">
+                    <span>Monto Comprobante:</span>
+                    <span className="font-bold text-emerald-800">{formatCLP(confirmedOrder.transferVerification.amountDetected)}</span>
+                  </div>
+                  {confirmedOrder.transferVerification.recipientText && (
+                    <div className="flex justify-between text-black/60">
+                      <span>Destinatario:</span>
+                      <span className="font-semibold text-black truncate max-w-[200px]">{confirmedOrder.transferVerification.recipientText}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -2186,6 +2316,15 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* 9.1 TRANSFER PAYMENT & AI VERIFICATION MODAL */}
+      <TransferPaymentModal
+        isOpen={isTransferModalOpen}
+        onClose={() => setIsTransferModalOpen(false)}
+        amount={finalTotal}
+        cartItemsCount={totalCartCount}
+        onConfirmOrder={handleConfirmTransferOrder}
+      />
 
       {/* 10. CATALOG VIEWER */}
       {activeCatalog && (
