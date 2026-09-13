@@ -224,7 +224,7 @@ export default function App() {
   const [shippingRegion, setShippingRegion] = useState<string>('Región Metropolitana');
   const [shippingCommune, setShippingCommune] = useState<string>('Santiago');
   const [shippingAddress, setShippingAddress] = useState<string>('');
-  const [paymentMethod, setPaymentMethod] = useState<'webpay' | 'transfer' | 'whatsapp'>('webpay');
+  const [paymentMethod, setPaymentMethod] = useState<'transfer' | 'whatsapp' | 'webpay'>('transfer');
 
   // Order Confirmed
   const [confirmedOrder, setConfirmedOrder] = useState<OrderConfirmation | null>(null);
@@ -261,9 +261,7 @@ export default function App() {
     return cart.reduce((acc, item) => acc + item.quantity, 0);
   }, [cart]);
 
-  const freeShippingThreshold = 35000;
-  const isFreeShipping = cartSubtotal >= freeShippingThreshold;
-  const shippingFee = cartSubtotal === 0 || shippingType === 'pickup' || isFreeShipping ? 0 : 3990;
+  const shippingFee = cartSubtotal === 0 || shippingType === 'pickup' ? 0 : 3990;
   const discountAmount = Math.round(cartSubtotal * appliedDiscount);
   const finalTotal = Math.max(0, cartSubtotal - discountAmount + shippingFee);
 
@@ -1757,27 +1755,17 @@ export default function App() {
               </button>
             </div>
 
-            {/* Free shipping bar */}
-            <div className="bg-[#F4F4F6] border-b border-black/8 p-3 text-xs">
-              {isFreeShipping ? (
-                <div className="text-black font-semibold flex items-center gap-1.5">
-                  <span>🎉</span>
-                  <span>¡Felicidades! Tienes Envío Gratis a todo Chile</span>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center justify-between font-semibold text-black/80 mb-1">
-                    <span>Agrega {formatCLP(freeShippingThreshold - cartSubtotal)} más para <strong>Envío Gratis</strong></span>
-                    <span>{Math.round((cartSubtotal / freeShippingThreshold) * 100)}%</span>
-                  </div>
-                  <div className="w-full bg-black/10 h-1.5 rounded-full overflow-hidden">
-                    <div
-                      className="bg-black h-full rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min(100, (cartSubtotal / freeShippingThreshold) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              )}
+            {/* Shipping info bar */}
+            <div className="bg-[#F4F4F6] border-b border-black/8 px-4 py-2.5 text-xs text-black/70 flex items-center justify-between">
+              <span className="flex items-center gap-1.5 font-medium">
+                <span>🚚</span>
+                <span>Despacho a Domicilio: <strong>{formatCLP(3990)}</strong></span>
+              </span>
+              <span className="text-black/50">·</span>
+              <span className="flex items-center gap-1.5 font-medium text-emerald-800">
+                <span>🤝</span>
+                <span>Retiro Consultora Gratis</span>
+              </span>
             </div>
 
             {/* Items */}
@@ -1892,7 +1880,7 @@ export default function App() {
                   <div className="flex justify-between">
                     <span>Despacho:</span>
                     <span className="font-semibold text-black">
-                      {isFreeShipping ? 'GRATIS' : formatCLP(shippingFee)}
+                      {shippingFee === 0 ? '$0' : formatCLP(shippingFee)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm font-black text-black pt-1 border-t border-black/10">
@@ -2042,7 +2030,7 @@ export default function App() {
                   >
                     <div className="font-extrabold text-sm text-black">🚚 Despacho a Domicilio</div>
                     <div className="text-xs text-black/50 mt-1">
-                      {isFreeShipping ? 'Envío Gratis' : '$3.990 en todo Chile'}
+                      $3.990 en todo Chile
                     </div>
                   </div>
 
@@ -2130,23 +2118,6 @@ export default function App() {
               <div className="space-y-4">
                 <div className="space-y-2.5">
                   <div
-                    onClick={() => setPaymentMethod('webpay')}
-                    className={`p-3.5 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${
-                      paymentMethod === 'webpay'
-                        ? 'border-black bg-[#F4F4F6]'
-                        : 'border-black/10 hover:bg-[#F4F4F6]'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-extrabold text-sm text-black">💳 Webpay Plus (Transbank)</div>
-                      <div className="text-xs text-black/50">Tarjetas de Débito, Crédito y Redcompra</div>
-                    </div>
-                    <span className="text-xs font-bold text-black font-semibold bg-white px-2 py-1 rounded border border-black/10">
-                      Recomendado
-                    </span>
-                  </div>
-
-                  <div
                     onClick={() => setPaymentMethod('transfer')}
                     className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
                       paymentMethod === 'transfer'
@@ -2159,10 +2130,15 @@ export default function App() {
                         <div className="font-extrabold text-sm text-black">🏦 Transferencia Bancaria Directa</div>
                         <div className="text-xs text-black/50">Banco Santander · Verificación automática con IA</div>
                       </div>
-                      <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                        <Sparkles size={11} />
-                        <span>IA Vision</span>
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-black font-semibold bg-white px-2 py-0.5 rounded border border-black/10">
+                          Recomendado
+                        </span>
+                        <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                          <Sparkles size={11} />
+                          <span>IA Vision</span>
+                        </span>
+                      </div>
                     </div>
 
                     {paymentMethod === 'transfer' && (
@@ -2212,12 +2188,12 @@ export default function App() {
                       <span>-{formatCLP(discountAmount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span>Despacho:</span>
-                    <span className="font-bold text-black">
-                      {shippingFee === 0 ? 'GRATIS' : formatCLP(shippingFee)}
-                    </span>
-                  </div>
+                    <div className="flex justify-between">
+                      <span>Despacho:</span>
+                      <span className="font-bold text-black">
+                        {shippingFee === 0 ? '$0 (Retiro)' : formatCLP(shippingFee)}
+                      </span>
+                    </div>
                   <div className="flex justify-between text-base font-black text-black pt-2 border-t border-black/10">
                     <span>Total a Pagar:</span>
                     <span className="text-black font-semibold">{formatCLP(finalTotal)}</span>
@@ -2575,16 +2551,13 @@ export default function App() {
               </h4>
               <div className="flex flex-wrap gap-2 mb-3">
                 <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
-                  Webpay Plus
+                  Transferencia Directa
                 </span>
                 <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
-                  Redcompra
+                  Validación IA Santander
                 </span>
                 <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
-                  Crédito / Débito
-                </span>
-                <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-full text-[11px] text-white/90 font-mono">
-                  Transferencia
+                  WhatsApp 24/7
                 </span>
               </div>
               <p className="text-[11px] text-white/50">

@@ -421,9 +421,8 @@ export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onCl
               <FileSpreadsheet size={36} className="mx-auto text-black/30" />
               <h4 className="font-bold text-sm text-black">Aún no hay compras registradas</h4>
               <p className="text-xs text-black/50 max-w-sm mx-auto">
-                Cuando los compradores realicen un pedido por Transferencia Bancaria, Webpay o
-                WhatsApp, sus datos (nombre, WhatsApp, dirección y productos) aparecerán aquí y en tu
-                Excel.
+                Cuando los compradores realicen un pedido por Transferencia Bancaria o WhatsApp, sus
+                datos (nombre, WhatsApp, dirección y productos) aparecerán aquí y en tu Excel.
               </p>
             </div>
           ) : (
