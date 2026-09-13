@@ -30,6 +30,11 @@ interface TransferPaymentModalProps {
   onClose: () => void;
   amount: number;
   cartItemsCount: number;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  shippingAddress?: string;
+  shippingCity?: string;
   onConfirmOrder: (verification: TransferVerificationResult) => void;
 }
 
@@ -46,6 +51,11 @@ export function TransferPaymentModal({
   onClose,
   amount,
   cartItemsCount,
+  customerName,
+  customerPhone,
+  customerEmail: _customerEmail,
+  shippingAddress,
+  shippingCity,
   onConfirmOrder,
 }: TransferPaymentModalProps) {
   const [step, setStep] = useState<'info' | 'verify'>('info');
@@ -368,6 +378,29 @@ Monto exacto a transferir: ${formatCLP(amount)}`;
               </span>
             </div>
           </div>
+
+          {/* Customer Summary Banner */}
+          {customerName && (
+            <div className="bg-[#FAF8F6] p-3.5 rounded-2xl border border-black/8 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div>
+                <span className="text-black/50 text-[11px] block">Comprador(a) registrado(a):</span>
+                <strong className="text-black">{customerName}</strong>
+                {customerPhone && (
+                  <span className="text-black/60 font-mono ml-1.5 font-medium">
+                    ({customerPhone})
+                  </span>
+                )}
+              </div>
+              <div className="text-[11px] text-black/60 sm:text-right">
+                <span className="block text-black/40">Entrega:</span>
+                <span className="font-medium text-black">
+                  {shippingAddress
+                    ? `${shippingAddress}${shippingCity ? `, ${shippingCity}` : ''}`
+                    : 'Retiro acordado con consultora'}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* STEP 1: Bank Transfer Details */}
           {step === 'info' && (

@@ -5,8 +5,10 @@ import { PRODUCTS } from './data/products';
 import { HeroSection } from './HeroSection';
 import { ProductImage } from './ProductImage';
 import { CategoryDiscovery } from './CategoryDiscovery';
-import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp, Sparkles, FileSpreadsheet } from 'lucide-react';
 import { TransferPaymentModal } from './TransferPaymentModal';
+import { OrdersAdminModal } from './OrdersAdminModal';
+import { recordNewOrder } from './services/ordersService';
 import type { TransferVerificationResult } from './services/transferVerifier';
 import './storefront.css';
 
@@ -212,11 +214,12 @@ export default function App() {
   // Checkout & Transfer Modal
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState<boolean>(false);
+  const [isOrdersAdminOpen, setIsOrdersAdminOpen] = useState<boolean>(false);
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
   const [customerName, setCustomerName] = useState<string>('');
   const [customerRut, setCustomerRut] = useState<string>('');
   const [customerEmail, setCustomerEmail] = useState<string>('');
-  const [customerPhone, setCustomerPhone] = useState<string>('+56912345678');
+  const [customerPhone, setCustomerPhone] = useState<string>('');
   const [shippingType, setShippingType] = useState<'delivery' | 'pickup'>('delivery');
   const [shippingRegion, setShippingRegion] = useState<string>('Región Metropolitana');
   const [shippingCommune, setShippingCommune] = useState<string>('Santiago');
@@ -471,7 +474,7 @@ export default function App() {
 
   // Lock scroll
   useEffect(() => {
-    if (activeCatalog || isCartOpen || isCheckoutOpen || quickViewProduct || confirmedOrder || isTransferModalOpen) {
+    if (activeCatalog || isCartOpen || isCheckoutOpen || quickViewProduct || confirmedOrder || isTransferModalOpen || isOrdersAdminOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -479,7 +482,7 @@ export default function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [activeCatalog, isCartOpen, isCheckoutOpen, quickViewProduct, confirmedOrder, isTransferModalOpen]);
+  }, [activeCatalog, isCartOpen, isCheckoutOpen, quickViewProduct, confirmedOrder, isTransferModalOpen, isOrdersAdminOpen]);
 
   // Complete Order via Regular Checkout
   const handleCompleteOrder = () => {
@@ -510,6 +513,7 @@ export default function App() {
     setConfirmedOrder(newOrder);
     setIsCheckoutOpen(false);
     setCart([]);
+    recordNewOrder(newOrder);
   };
 
   // Complete Order via AI-Verified Bank Transfer
@@ -551,6 +555,7 @@ export default function App() {
     setIsCartOpen(false);
     setIsCheckoutOpen(false);
     setCart([]);
+    recordNewOrder(newOrder);
     triggerToast('✓ ¡Transferencia verificada y pedido confirmado con éxito!');
   };
 
@@ -854,6 +859,16 @@ export default function App() {
               <BookOpen size={17} />
               <span className="hidden sm:inline">Revistas Digitales</span>
               <span className="sr-only sm:hidden">Revistas</span>
+            </button>
+
+            {/* Orders Admin / Excel button for Camila */}
+            <button
+              onClick={() => setIsOrdersAdminOpen(true)}
+              className="px-3 py-2 rounded-full text-xs font-medium border border-black/10 bg-white hover:bg-[#F4F4F6] text-black transition-all flex items-center gap-1.5"
+              title="Registro de Ventas y Compradores (Excel / Google Sheets)"
+            >
+              <FileSpreadsheet size={16} className="text-emerald-700" />
+              <span className="hidden md:inline">Ventas & Excel</span>
             </button>
 
             {/* Shopping Cart Button */}
@@ -1886,31 +1901,31 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Transfer with AI verification button */}
+                {/* Primary: Continuar a Pagar (asks for buyer details) */}
                 <button
                   onClick={() => {
                     setIsCartOpen(false);
-                    setIsTransferModalOpen(true);
-                  }}
-                  className="w-full py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
-                >
-                  <Sparkles size={16} className="text-amber-300 flex-shrink-0" />
-                  <span>Pagar con Transferencia (Validación IA)</span>
-                  <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full uppercase tracking-wider font-mono">
-                    Instantáneo
-                  </span>
-                </button>
-
-                {/* Other payment methods */}
-                <button
-                  onClick={() => {
-                    setIsCartOpen(false);
+                    setCheckoutStep(1);
                     setIsCheckoutOpen(true);
                   }}
-                  className="w-full py-2.5 rounded-full bg-white hover:bg-neutral-100 border border-black/15 text-black font-medium text-xs flex items-center justify-center gap-1.5 transition-colors"
+                  className="w-full py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99]"
                 >
-                  <span>Otros medios de pago (Webpay, Tarjetas)</span>
+                  <span>Continuar a Pagar</span>
                   <span>→</span>
+                </button>
+
+                {/* Shortcut: Pagar con Transferencia Bancaria */}
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    setPaymentMethod('transfer');
+                    setCheckoutStep(1);
+                    setIsCheckoutOpen(true);
+                  }}
+                  className="w-full py-2.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Sparkles size={14} className="text-amber-500" />
+                  <span>Pagar con Transferencia Bancaria (Validación IA)</span>
                 </button>
               </div>
             )}
@@ -2217,10 +2232,21 @@ export default function App() {
                     ← Volver
                   </button>
                   <button
-                    onClick={handleCompleteOrder}
+                    onClick={() => {
+                      if (paymentMethod === 'transfer') {
+                        setIsCheckoutOpen(false);
+                        setIsTransferModalOpen(true);
+                      } else {
+                        handleCompleteOrder();
+                      }
+                    }}
                     className="flex-1 py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white font-medium text-sm shadow-xs flex items-center justify-center gap-2"
                   >
-                    <span>Confirmar y Pagar ({formatCLP(finalTotal)})</span>
+                    <span>
+                      {paymentMethod === 'transfer'
+                        ? `Validar Transferencia con IA (${formatCLP(finalTotal)}) →`
+                        : `Confirmar y Pagar (${formatCLP(finalTotal)})`}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -2325,9 +2351,20 @@ export default function App() {
           onClose={() => setIsTransferModalOpen(false)}
           amount={finalTotal}
           cartItemsCount={totalCartCount}
+          customerName={customerName}
+          customerPhone={customerPhone}
+          customerEmail={customerEmail}
+          shippingAddress={shippingAddress}
+          shippingCity={`${shippingCommune}, ${shippingRegion}`}
           onConfirmOrder={handleConfirmTransferOrder}
         />
       )}
+
+      {/* 9.2 ORDERS ADMIN MODAL (EXCEL & GOOGLE SHEETS) */}
+      <OrdersAdminModal
+        isOpen={isOrdersAdminOpen}
+        onClose={() => setIsOrdersAdminOpen(false)}
+      />
 
       {/* 10. CATALOG VIEWER */}
       {activeCatalog && (
@@ -2560,8 +2597,17 @@ export default function App() {
             <div>
               © 2026 Catálogo Camila Browne • Natura & Avon Chile. Todos los derechos reservados.
             </div>
-            <div>
-              Tu belleza, a tu manera.
+            <div className="flex items-center gap-3">
+              <span>Tu belleza, a tu manera.</span>
+              <span>•</span>
+              <button
+                onClick={() => setIsOrdersAdminOpen(true)}
+                className="text-white/80 hover:text-white underline flex items-center gap-1 font-semibold transition-colors"
+                title="Ver registro de ventas de clientes y descargar Excel"
+              >
+                <FileSpreadsheet size={13} className="text-emerald-400" />
+                <span>Planilla de Ventas (Excel / Google Sheets)</span>
+              </button>
             </div>
           </div>
         </div>
