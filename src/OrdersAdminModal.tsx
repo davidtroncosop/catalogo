@@ -187,10 +187,6 @@ export const OrdersAdminModal: React.FC<OrdersAdminModalProps> = ({ isOpen, onCl
               <span>Ingresar al Panel de Ventas</span>
             </button>
           </form>
-
-          <div className="p-3 bg-neutral-50 rounded-xl border border-black/5 text-[11px] text-black/50 leading-relaxed text-center">
-            💡 Contraseña por defecto: <strong className="font-mono text-black font-bold">camila</strong> (puedes cambiarla una vez que ingreses).
-          </div>
         </div>
       </div>
     );
