@@ -525,7 +525,7 @@ export default function App() {
     if (order.discount > 0) text += `\n🏷️ *Descuento:* -${formatCLP(order.discount)}`;
     if (order.shippingFee > 0) text += `\n🚚 *Envío:* ${formatCLP(order.shippingFee)}`;
     text += `\n💰 *TOTAL A PAGAR:* ${formatCLP(order.total)}\n\n`;
-    text += `✨ _Generado desde la Tienda Digital Natura & Avon Chile_`;
+    text += `✨ _Generado desde el Catálogo Camila Browne (Natura & Avon Chile)_`;
 
     return `https://wa.me/${phoneClean}?text=${encodeURIComponent(text)}`;
   };
@@ -704,7 +704,7 @@ export default function App() {
     <div className="beauty-store min-h-screen flex flex-col text-black">
       <div id="catalogo-store">
         {/* 1. ANNOUNCEMENT BAR */}
-      <div className="beauty-announcement">Un nuevo ciclo para descubrir tus favoritos · Natura & Avon</div>
+      <div className="beauty-announcement">Un nuevo ciclo para descubrir tus favoritos · Catálogo Camila Browne</div>
 
       {/* 2. NAVBAR */}
       <header className="beauty-header sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-black/8 shadow-sm">
@@ -728,14 +728,14 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-sm sm:text-base tracking-tight text-black leading-none">
-                  Natura & Avon
+                  Catálogo Camila Browne
                 </span>
                 <span className="hidden lg:inline bg-[#F4F4F6] text-black text-[10px] font-medium px-2.5 py-0.5 rounded-full border border-black/8">
                   {PRODUCTS.length} Productos
                 </span>
               </div>
               <p className="text-[11px] text-black/50 font-normal tracking-wide mt-0.5">
-                Ciclo 14 · 2026 Chile
+                Natura & Avon · Ciclo 14 Chile
               </p>
             </div>
           </div>
@@ -2352,11 +2352,11 @@ export default function App() {
                   </svg>
                 </div>
                 <span className="font-semibold text-sm text-white tracking-tight">
-                  Natura & Avon Chile
+                  Catálogo Camila Browne
                 </span>
               </div>
               <p className="text-white/60 leading-relaxed text-xs">
-                Catálogo con {PRODUCTS.length.toLocaleString('es-CL')} productos y variantes del Ciclo 14 / 2026. Natura Cosméticos, Avon y Casa & Estilo.
+                Catálogo oficial de Camila Browne con {PRODUCTS.length.toLocaleString('es-CL')} productos y variantes del Ciclo 14 / 2026. Natura Cosméticos, Avon y Casa & Estilo.
               </p>
             </div>
 
@@ -2416,7 +2416,7 @@ export default function App() {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-white/40 text-[11px]">
             <div>
-              © 2026 Natura & Avon Chile • Campaña Ciclo 14. Todos los derechos reservados.
+              © 2026 Catálogo Camila Browne • Natura & Avon Chile. Todos los derechos reservados.
             </div>
             <div>
               Tu belleza, a tu manera.
