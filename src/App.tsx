@@ -5,7 +5,7 @@ import { PRODUCTS } from './data/products';
 import { HeroSection } from './HeroSection';
 import { ProductImage } from './ProductImage';
 import { CategoryDiscovery } from './CategoryDiscovery';
-import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp, Sparkles, FileSpreadsheet, Star } from 'lucide-react';
+import { Heart, BookOpen, SlidersHorizontal, ArrowUpDown, RotateCcw, ChevronDown, ChevronUp, Sparkles, FileSpreadsheet, Star, MessageSquare } from 'lucide-react';
 import { TransferPaymentModal } from './TransferPaymentModal';
 import { OrdersAdminModal } from './OrdersAdminModal';
 import { ReviewsSection, TrustReviewsBadge } from './ReviewsSection';
@@ -765,9 +765,8 @@ export default function App() {
         <div className="beauty-announcement flex items-center justify-center gap-2 flex-wrap text-center">
           <span>Un nuevo ciclo para descubrir tus favoritos · Catálogo Camila Browne</span>
           <span className="hidden sm:inline text-black/30">·</span>
-          <span className="inline-flex items-center gap-1 font-bold text-amber-950">
-            <span>⭐ 4.9/5 en satisfacción</span>
-            <span className="hidden md:inline text-amber-900/80">(+250 clientas)</span>
+          <span className="inline-flex items-center gap-1 font-medium text-black/75">
+            <span>✨ Cosméticos & Perfumería 100% Original Sellada</span>
           </span>
         </div>
 
@@ -885,11 +884,10 @@ export default function App() {
                 document.getElementById('seccion-resenas')?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="px-3 py-2 rounded-full text-xs font-medium border border-black/10 bg-white hover:bg-[#F4F4F6] text-black transition-all flex items-center gap-1.5"
-              title="Ver opiniones de clientas (4.9 estrellas)"
+              title="Ver opiniones de clientas"
             >
-              <Star size={15} className="fill-amber-400 text-amber-400" />
-              <span className="font-bold">4.9</span>
-              <span className="hidden lg:inline text-black/60">Reseñas</span>
+              <MessageSquare size={14} className="text-amber-600" />
+              <span className="font-semibold text-black">Reseñas</span>
             </button>
 
             {/* Shopping Cart Button */}
@@ -1644,7 +1642,8 @@ export default function App() {
       )}
 
       {/* 5.5 CUSTOMER REVIEWS & TESTIMONIALS SECTION */}
-      <div id="seccion-resenas">
+      <div id="seccion-resenas" className="relative">
+        <span id="resenas" className="absolute -top-20" />
         <ReviewsSection />
       </div>
 
@@ -2579,7 +2578,7 @@ export default function App() {
                     }}
                     className="hover:text-amber-300 transition-colors flex items-center gap-1 text-left text-amber-400 font-medium"
                   >
-                    <span>⭐ 4.9/5 Reseñas de Clientas</span>
+                    <span>💬 Opiniones y Reseñas</span>
                   </button>
                 </li>
               </ul>
