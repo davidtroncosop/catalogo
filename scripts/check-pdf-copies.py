@@ -7,8 +7,8 @@ import pymupdf
 from PIL import Image, ImageChops, ImageStat
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = {'Natura c14.pdf': 'natura-c14.pdf', 'Avon c14.pdf': 'avon-c14.pdf',
-         'Casa y Estilo c14.pdf': 'casa-estilo-c14.pdf', 'Ciclo_14.pdf': 'ciclo-14.pdf'}
+FILES = {'Natura c16.pdf': 'natura-c16.pdf', 'Avon c16.pdf': 'avon-c16.pdf',
+         'Casa y Estilo c16.pdf': 'casa-estilo-c16.pdf'}
 results = []
 for source, copy in FILES.items():
     source_path, copy_path = ROOT / 'inputs' / source, ROOT / 'public' / 'pdf' / copy

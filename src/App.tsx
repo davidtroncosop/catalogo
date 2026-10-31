@@ -41,8 +41,7 @@ export type CatalogFilterOption =
   | 'all'
   | 'natura'
   | 'avon'
-  | 'casa-estilo'
-  | 'ciclo-14';
+  | 'casa-estilo';
 
 export type PriceStatusOption =
   | 'all'
@@ -56,96 +55,77 @@ const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u03
 // --- CATALOG DATA ---
 const CATALOGS: CatalogItem[] = [
   {
-    id: 'natura-c14',
+    id: 'natura-c16',
     slug: 'natura',
     title: 'Revista Interactiva Natura',
-    subtitle: 'Ciclo 14 / 2026 Chile',
+    subtitle: 'Ciclo 16 / 2026 Chile',
     brand: 'Natura',
-    campaign: 'Ciclo 14 / 2026',
-    totalPages: 194,
-    coverImage: '/covers/natura-c14.jpg',
-    pdfUrl: '/pdf/natura-c14.pdf',
+    campaign: 'Ciclo 16 / 2026',
+    totalPages: 200,
+    coverImage: '/covers/natura-c16.jpg',
+    pdfUrl: '/pdf/natura-c16.pdf',
     badge: 'Hasta 40% OFF',
     badgeColor: 'bg-black text-white',
     description:
-      'Lanzamiento exclusivo Kaiak 21k, Tododia ciruela y flor de vainilla, Ekos Amazonía Viva y Chronos.',
+      'Lanzamiento Océano masculino, kit Ekos Naturaleza de los sueños, Chronos Derma y productos virales con hasta 40% de descuento.',
     tagline: 'hace bien estar bien',
     sections: [
       { title: 'Imperdibles del Ciclo', startPage: 2 },
-      { title: 'Perfumería & Kaiak 21k', startPage: 6 },
-      { title: 'Cuidados Diarios & Tododia', startPage: 48 },
-      { title: 'Ekos Amazonía', startPage: 80 },
-      { title: 'Rostro & Chronos', startPage: 110 },
-      { title: 'Maquillaje UNA & Faces', startPage: 136 },
-      { title: 'Lumina Capilar', startPage: 165 },
+      { title: 'Perfumería', startPage: 16 },
+      { title: 'Ekos & Cuidados Diarios', startPage: 50 },
+      { title: 'Rostro & Chronos', startPage: 58 },
+      { title: 'Maquillaje UNA & Faces', startPage: 82 },
+      { title: 'Cabello & Lumina', startPage: 101 },
+      { title: 'Tododia & Cuerpo', startPage: 138 },
+      { title: 'Casa & Hogar', startPage: 192 },
     ],
   },
   {
-    id: 'avon-c14',
+    id: 'avon-c16',
     slug: 'avon',
     title: 'Revista Digital Avon',
-    subtitle: 'Ciclo 14 / 2026 Chile',
+    subtitle: 'Ciclo 16 / 2026 Chile',
     brand: 'Avon',
-    campaign: 'Ciclo 14 / 2026',
-    totalPages: 164,
-    coverImage: '/covers/avon-c14.jpg',
-    pdfUrl: '/pdf/avon-c14.pdf',
-    badge: 'Mega Ofertas',
+    campaign: 'Ciclo 16 / 2026',
+    totalPages: 166,
+    coverImage: '/covers/avon-c16.jpg',
+    pdfUrl: '/pdf/avon-c16.pdf',
+    badge: 'Hasta 65% OFF',
     badgeColor: 'bg-black text-white',
     description:
-      'Perfumes 300 Km/h Surfer, Max Turbo, Máscara Efecto Abanico y Labiales Power Stay 16 horas.',
-    tagline: 'vive al límite',
+      'Dale glow a tu look: labiales Power Stay e Hydramatic, kits de perfumes con 40% OFF, protectores solares Anew y 300 Km/h Boost.',
+    tagline: 'dale glow a tu look',
     sections: [
       { title: 'Imperdibles del Ciclo', startPage: 2 },
-      { title: 'Maquillaje & Rostro', startPage: 6 },
-      { title: 'Perfumería 300 Km/h', startPage: 46 },
+      { title: 'Maquillaje', startPage: 6 },
+      { title: 'Perfumería', startPage: 46 },
       { title: 'Cuidado Facial Anew', startPage: 84 },
-      { title: 'Cuidados Diarios Care', startPage: 110 },
-      { title: 'Bienestar & Cabello', startPage: 138 },
+      { title: 'Cuidados Diarios & Solar', startPage: 106 },
+      { title: 'Cabello', startPage: 120 },
+      { title: 'Niñez & Estilo', startPage: 138 },
+      { title: 'Mega Ofertas', startPage: 150 },
     ],
   },
   {
-    id: 'casa-estilo-c14',
+    id: 'casa-estilo-c16',
     slug: 'casa-estilo',
     title: 'Casa y Estilo Outlet',
-    subtitle: 'Ciclo 14 / 2026 Chile',
+    subtitle: 'Ciclo 16 / 2026 Chile',
     brand: 'Casa & Estilo',
-    campaign: 'Ciclo 14 / 2026',
-    totalPages: 22,
-    coverImage: '/covers/casa-estilo-c14.jpg',
-    pdfUrl: '/pdf/casa-estilo-c14.pdf',
-    badge: 'Hasta 70% OFF',
+    campaign: 'Ciclo 16 / 2026',
+    totalPages: 21,
+    coverImage: '/covers/casa-estilo-c16.jpg',
+    pdfUrl: '/pdf/casa-estilo-c16.pdf',
+    badge: 'Hasta 65% OFF',
     badgeColor: 'bg-black text-white',
     description:
-      'Outlet imperdible con hasta 70% de descuento en organizadores RPET, posavasos con destapador y cocina.',
+      'Outlet hasta agotar stock: Disney para niños, juguetes, pijamas, cocina Cucina Donna Twist y accesorios para el hogar.',
     tagline: '¡Los mejores productos a precios únicos!',
     sections: [
-      { title: 'Imperdibles', startPage: 2 },
-      { title: 'Organizadores y Hogar', startPage: 4 },
-      { title: 'Cocina & Accesorios', startPage: 10 },
-      { title: 'Estilo y Moda', startPage: 16 },
-    ],
-  },
-  {
-    id: 'ciclo-14',
-    slug: 'ciclo-14',
-    title: 'Mi Consultoría Natura & Avon',
-    subtitle: 'Guía de Negocio Ciclo 14',
-    brand: 'Mi Consultoría',
-    campaign: 'Ciclo 14 / 2026',
-    totalPages: 58,
-    coverImage: '/covers/ciclo-14.jpg',
-    pdfUrl: '/pdf/ciclo-14.pdf',
-    badge: 'Exclusivo Consultoras',
-    badgeColor: 'bg-black text-white',
-    description:
-      'Franjas de puntaje (55 pts Avon / 80 pts Natura), kits promocionales de lanzamiento y herramientas de venta.',
-    tagline: 'Gana más según tu nivel de consultoría',
-    sections: [
-      { title: 'Plataforma de Belleza', startPage: 2 },
-      { title: 'Franjas de Puntaje', startPage: 3 },
-      { title: 'Promociones Únicas', startPage: 4 },
-      { title: 'Kits de Negocio', startPage: 16 },
+      { title: 'Niñez & Disney', startPage: 3 },
+      { title: 'Mesa & Cocina', startPage: 8 },
+      { title: 'Fitness & Hogar', startPage: 12 },
+      { title: 'Cocina & Repostería', startPage: 16 },
     ],
   },
 ];
@@ -161,7 +141,7 @@ const CATEGORIES = [
   'Kits & Ofertas',
 ];
 
-const BRANDS = ['Todas las Marcas', 'Natura', 'Avon', 'Casa & Estilo', 'Mi Consultoría'];
+const BRANDS = ['Todas las Marcas', 'Natura', 'Avon', 'Casa & Estilo'];
 
 // Currency formatter
 const formatCLP = (amount: number) => {
@@ -326,11 +306,11 @@ export default function App() {
     setCouponError('');
     setCouponSuccess('');
     const code = couponCode.trim().toUpperCase();
-    if (code === 'CICLO14' || code === 'NATURA10' || code === 'AVON10') {
+    if (code === 'CICLO16' || code === 'NATURA10' || code === 'AVON10') {
       setAppliedDiscount(0.1);
       setCouponSuccess('¡Cupón aplicado! 10% de descuento adicional');
     } else {
-      setCouponError('Cupón inválido. Prueba con: CICLO14');
+      setCouponError('Cupón inválido. Prueba con: CICLO16');
     }
   };
 
@@ -799,7 +779,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-[11px] text-black/50 font-normal tracking-wide mt-0.5">
-                Natura & Avon · Ciclo 14 Chile
+                Natura & Avon · Ciclo 16 Chile
               </p>
             </div>
           </div>
@@ -1271,7 +1251,6 @@ export default function App() {
                         { val: 'natura', label: 'Revista Natura' },
                         { val: 'avon', label: 'Revista Avon' },
                         { val: 'casa-estilo', label: 'Casa & Estilo' },
-                        { val: 'ciclo-14', label: 'Mi Consultoría' },
                       ].map((c) => (
                         <button
                           key={c.val}
@@ -1554,7 +1533,7 @@ export default function App() {
                 Catálogos Digitales Oficiales
               </span>
               <h2 className="text-3xl font-black text-black tracking-tight mt-0.5">
-                Revistas Interactivas Ciclo 14 / 2026 Chile
+                Revistas Interactivas Ciclo 16 / 2026 Chile
               </h2>
               <p className="text-sm text-black/50 mt-1">
                 Hojea todas las páginas en alta definición. Haz clic en cualquier portada para abrir el visor interactivo.
@@ -1802,7 +1781,7 @@ export default function App() {
                   <div className="text-5xl mb-3">🛒</div>
                   <h4 className="font-extrabold text-stone-800 text-base">Tu carrito está vacío</h4>
                   <p className="text-xs text-black/50 max-w-xs mx-auto mt-1 mb-5">
-                    Explora nuestra tienda o revistas digitales para encontrar los mejores productos y ofertas del Ciclo 14.
+                    Explora nuestra tienda o revistas digitales para encontrar los mejores productos y ofertas del Ciclo 16.
                   </p>
                   <button
                     onClick={() => setIsCartOpen(false)}
@@ -1879,7 +1858,7 @@ export default function App() {
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Cupón (ej: CICLO14)"
+                    placeholder="Cupón (ej: CICLO16)"
                     className="flex-1 px-3.5 py-1.5 bg-white border border-black/15 rounded-full text-xs font-mono uppercase focus:outline-none focus:ring-1 focus:ring-black"
                   />
                   <button
@@ -2557,7 +2536,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-white/60 leading-relaxed text-xs">
-                Catálogo oficial de Camila Browne con {PRODUCTS.length.toLocaleString('es-CL')} productos y variantes del Ciclo 14 / 2026. Natura Cosméticos, Avon y Casa & Estilo.
+                Catálogo oficial de Camila Browne con {PRODUCTS.length.toLocaleString('es-CL')} productos y variantes del Ciclo 16 / 2026. Natura Cosméticos, Avon y Casa & Estilo.
               </p>
             </div>
 

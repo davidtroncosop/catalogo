@@ -10,10 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'tmp' / 'catalog-audit'
 OUT.mkdir(parents=True, exist_ok=True)
 CATALOGS = {
-    'natura': 'Natura c14.pdf',
-    'avon': 'Avon c14.pdf',
-    'casa-estilo': 'Casa y Estilo c14.pdf',
-    'ciclo-14': 'Ciclo_14.pdf',
+    'natura': 'Natura c16.pdf',
+    'avon': 'Avon c16.pdf',
+    'casa-estilo': 'Casa y Estilo c16.pdf',
 }
 
 catalog_json = ROOT / 'src' / 'data' / 'catalog.json'
@@ -40,7 +39,7 @@ for slug, filename in CATALOGS.items():
                                   'size': max(s['size'] for s in line['spans'])})
         found = set(re.findall(r'\(\s*(\d{2,7})\s*\)', text))
         # The consultancy guide also prints order codes without parentheses.
-        if slug == 'ciclo-14':
+        if slug.startswith('ciclo-'):
             found.update(re.findall(r'(?m)^\s*(\d{5,6})\s*$', text))
             found.update(re.findall(r'(\d{5,6})\s*-\s*\d+\s*pts', text))
         for code in sorted(found):

@@ -16,14 +16,16 @@ evidence = json.loads((WORK / 'evidence.json').read_text())
 official = json.loads((WORK / 'official.json').read_text())
 existing = json.loads((WORK / 'existing.json').read_text())
 existing_by_id = {f'{p["catalogSlug"]}-{p["code"]}': p for p in existing}
-overrides_file = ROOT / 'scripts' / 'catalog-overrides.json'
+CYCLE = 16
+# Manual corrections are tied to one campaign's pages and prices. Files are
+# named per cycle so a new campaign never inherits another cycle's prices.
+overrides_file = ROOT / 'scripts' / f'catalog-overrides-c{CYCLE}.json'
 overrides = json.loads(overrides_file.read_text()) if overrides_file.exists() else {}
-reviewed_rules = runpy.run_path(str(ROOT / 'scripts' / 'catalog-reviewed-rules.py'))['RULES']
-consultancy_names = json.loads((ROOT / 'scripts' / 'consultancy-names.json').read_text())
-for code, (name, price, original, group) in json.loads((ROOT / 'scripts' / 'avon-reviewed.json').read_text()).items():
-    overrides[f'avon-{code}'] = {'name': name, 'price': price, 'originalPrice': original, 'category': group}
-BRANDS = {'natura': 'Natura', 'avon': 'Avon', 'casa-estilo': 'Casa & Estilo', 'ciclo-14': 'Mi Consultoría'}
-TITLES = {'natura': 'Revista Natura C14', 'avon': 'Revista Avon C14', 'casa-estilo': 'Casa y Estilo C14', 'ciclo-14': 'Mi Consultoría Ciclo 14'}
+rules_file = ROOT / 'scripts' / f'catalog-reviewed-rules-c{CYCLE}.py'
+reviewed_rules = runpy.run_path(str(rules_file))['RULES'] if rules_file.exists() else []
+consultancy_names = {}
+BRANDS = {'natura': 'Natura', 'avon': 'Avon', 'casa-estilo': 'Casa & Estilo'}
+TITLES = {'natura': f'Revista Natura C{CYCLE}', 'avon': f'Revista Avon C{CYCLE}', 'casa-estilo': f'Casa y Estilo C{CYCLE}'}
 
 
 def clean(s):
@@ -44,11 +46,12 @@ def category(slug, page, name):
     if re.search(r'eau de|\bedp\b|\bedt\b|perfume|colonia|perfumeria|body splash|frescor', n): return 'Perfumería'
     if re.search(r'home spray|difusor|vela|botella|bolsa|mochila|plato|cocina|taza|organizador|huerto|neceser|cuaderno|lonchera|cartuchera', n): return 'Hogar & Cocina'
     if slug == 'natura':
-        if 32 <= page <= 60: return 'Perfumería'
-        if 63 <= page <= 78: return 'Cuidado Facial'
-        if 82 <= page <= 103: return 'Maquillaje'
-        if 115 <= page <= 137: return 'Cabello'
-        if page >= 173: return 'Hogar & Cocina'
+        # Section page ranges of Natura C16.
+        if 16 <= page <= 49: return 'Perfumería'
+        if 58 <= page <= 81: return 'Cuidado Facial'
+        if 82 <= page <= 100: return 'Maquillaje'
+        if 101 <= page <= 137: return 'Cabello'
+        if page >= 192: return 'Hogar & Cocina'
     return 'Cuerpo & Baño'
 
 
@@ -66,7 +69,7 @@ def pdf_name(page, code):
     for line in lines:
         value = line['text']
         if line == anchor: continue
-        if re.search(r'\(\s*\d+\s*\)|\$|\d+\s*pts|^de$|^a$|descuento|\d+%', value, re.I):
+        if re.search(r'\(\s*\d+\s*\)|\$|\d+\s*pts|^de$|^a$|descuento|\d+%|^\d{1,3}(?:\.\d{3})+$', value, re.I):
             if result: break
             continue
         if re.search(r'^stock|^favorito|^natura$|^producto$|^con repuesto$|^intensidad|^nuevo envase', value, re.I): continue
@@ -81,6 +84,7 @@ def prices_on(page):
     for line in page['lines']:
         text = line['text']
         if re.search(r'\bx\s*\d|\d\s*ml|\d\s*g\b', text, re.I): continue  # unit prices
+        if re.search(r'ahorra', text, re.I): continue  # savings amounts, not prices
         for match in re.finditer(r'(?<!\d)(\d{1,3}(?:\.\d{3})+)(?!\d)', text):
             if not ('$' in text or re.fullmatch(r'(?:a\s*)?\d[\d.]*', text)):
                 continue
@@ -113,6 +117,13 @@ def price_for(page, code):
     original = chosen['amount']
     if originals and abs(originals[0]['bbox'][1] - chosen['bbox'][1]) < 65 and abs(originals[0]['bbox'][0] - chosen['bbox'][0]) < 60:
         original = originals[0]['amount']
+    # Multi-buy offers ("3 unidades a $16.780", "llevando 2", "3x2") print bundle
+    # totals or conditional unit prices next to the product. Neither is the
+    # single-unit retail price, so those products are sent to the magazine.
+    cx, cy = chosen['bbox'][0], chosen['bbox'][1]
+    if any(re.search(r'^\s*\d+\s*unidades\s*$|llevando|si llevas|\b\d\s*[x×]\s*\d\b|compra\s+\d', l['text'], re.I)
+           and abs(l['bbox'][1] - cy) < 70 and abs(l['bbox'][0] - cx) < 90 for l in page['lines']):
+        confident = False
     return chosen['amount'] if confident else 0, original if confident else 0, 'catalog' if confident else 'consult', [p['amount'] for p in ranked[:4]]
 
 
@@ -120,9 +131,12 @@ products = []
 audit_rows = []
 for slug, catalog in evidence.items():
     for code, pages in catalog['codes'].items():
-        page = catalog['pages'][pages[0] - 1]
-        if slug == 'casa-estilo':
-            page = next((catalog['pages'][n-1] for n in pages if prices_on(catalog['pages'][n-1])), page)
+        # Teaser pages ("Imperdibles", indexes) show codes without prices. Use the
+        # first page with a reviewed rule, then the first with a confident price.
+        candidates_pages = [catalog['pages'][n - 1] for n in pages]
+        page = (next((pg for pg in candidates_pages if any(r[0] == slug and r[1] == pg['page'] and re.match(r[2], code) for r in reviewed_rules)), None)
+                or next((pg for pg in candidates_pages if price_for(pg, code)[2] == 'catalog'), None)
+                or candidates_pages[0])
         metadata = official.get(f'{slug}:{code}') or {}
         # Consultancy codes identify conditional bundles, not individual retail SKUs.
         previous = existing_by_id.get(f'{slug}-{code}', {})
@@ -133,20 +147,16 @@ for slug, catalog in evidence.items():
         variant = clean(metadata.get('variant'))
         if variant and norm(variant) not in norm(name): name += f' — {variant}'
         price, original, status, candidates = price_for(page, code)
-        if slug == 'natura':
-            for rule_page, pattern, family, sale, list_price in reviewed_rules:
-                if page['page'] == rule_page and re.match(pattern, code):
-                    price, original, status = sale, list_price, 'catalog'
-                    if not metadata.get('name'):
-                        tone_match = re.search(r'([^\n]+)\n\s*\(\s*' + code + r'\s*\)', page['text'])
-                        tone = clean(tone_match[1]) if tone_match else ''
-                        name = family + (f' — {tone}' if tone and len(tone) < 30 and '$' not in tone else '')
-                    break
-        # Existing Avon retail prices are outside the scope of this import. Keep
-        # them unless a manually reviewed PDF override explicitly corrects one.
-        if slug == 'avon' and previous:
-            price, original, status = previous['price'], previous['originalPrice'], 'catalog'
-        if slug == 'ciclo-14': price, original, status = 0, 0, 'consult'
+        for rule_slug, rule_page, pattern, family, sale, list_price in reviewed_rules:
+            if rule_slug == slug and page['page'] == rule_page and re.match(pattern, code):
+                price, original, status = sale, list_price, 'catalog'
+                if not metadata.get('name') and not family.startswith('Código'):
+                    tone_match = re.search(r'([^\n]+)\n\s*\(\s*' + code + r'\s*\)', page['text'])
+                    tone = clean(tone_match[1]) if tone_match else ''
+                    name = family + (f' — {tone}' if tone and len(tone) < 30 and '$' not in tone else '')
+                break
+        # Prices always come from this cycle's PDF. Names from the previous
+        # catalogue are reused (same SKU), prices never are.
         image = metadata.get('image') or f'/catalogs/{slug}/{page["page"]}.webp'
         fallback = f'/catalogs/{slug}/{page["page"]}.webp'
         p = {
@@ -160,7 +170,7 @@ for slug, catalog in evidence.items():
             'imageSourceUrl': metadata.get('imageSourceUrl'),
             'catalogSlug': slug, 'catalogTitle': TITLES[slug], 'page': page['page'], 'catalogPages': pages,
             'description': clean(metadata.get('description')) or f'{name}. Código {code}. Consulta los detalles en {TITLES[slug]}, página {page["page"]}.',
-            'benefits': [f'Código de catálogo: {code}', f'Campaña C14 · página {page["page"]}'],
+            'benefits': [f'Código de catálogo: {code}', f'Campaña C{CYCLE} · página {page["page"]}'],
             'inStock': True,
         }
         if slug == 'ciclo-14':
@@ -179,9 +189,8 @@ for slug, catalog in evidence.items():
         audit_rows.append({'id': p['id'], 'page': p['page'], 'name': p['name'], 'price': p['price'],
                            'priceStatus': p['priceStatus'], 'candidates': candidates,
                            'imageSource': p['imageSource'], 'officialName': bool(metadata.get('name')),
-                           'priceProvenance': 'retained-existing' if slug == 'avon' and 'price' not in override else
-                            'consultancy-conditions' if p['priceStatus'] == 'consult' else
-                            'reviewed-pdf' if 'price' in override or (slug == 'natura' and any(page['page'] == r[0] and re.match(r[1], code) for r in reviewed_rules)) else 'pdf-layout'})
+                           'priceProvenance': 'consultancy-conditions' if p['priceStatus'] == 'consult' else
+                            'reviewed-pdf' if 'price' in override or any(r[0] == slug and page['page'] == r[1] and re.match(r[2], code) for r in reviewed_rules) else 'pdf-layout'})
 
 # Stable magazine order makes discovery predictable, including variants.
 products.sort(key=lambda p: (list(BRANDS).index(p['catalogSlug']), p['page'], p['name'], p['code']))

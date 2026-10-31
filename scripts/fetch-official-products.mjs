@@ -9,8 +9,13 @@ const output = path.join(dir, 'official.json');
 const official = fs.existsSync(output) ? JSON.parse(fs.readFileSync(output, 'utf8')) : {};
 const save = () => fs.writeFileSync(output, JSON.stringify(official, null, 2) + '\n');
 
-async function request(url) {
+async function request(url, attempt = 0) {
   const response = await fetch(url, { signal: AbortSignal.timeout(25000) });
+  // The stores rate-limit bursts; back off instead of aborting the whole refresh.
+  if (response.status === 429 && attempt < 5) {
+    await new Promise(r => setTimeout(r, 5000 * 2 ** attempt));
+    return request(url, attempt + 1);
+  }
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response;
 }

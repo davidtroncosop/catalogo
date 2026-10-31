@@ -35,22 +35,21 @@ for (const [slug, entry] of Object.entries(audit.catalogs)) {
   assert.deepEqual(selected.map(p => p.id).sort(), audit.rows.filter(r => r.id.startsWith(`${slug}-`)).map(r => r.id).sort());
 }
 // Independent, manually read examples protect against wrong shade pricing,
-// conditional multi-buy prices, teaser pages, and cross-catalogue bundle mixing.
+// conditional multi-buy prices (natura-2179 is a 3x2 offer) and teaser pages.
 const expected = {
-  'natura-228525': [20990, 8], 'natura-248629': [20990, 8],
-  'natura-108125': [11190, 84], 'natura-110182': [17190, 84],
-  'natura-107123': [10790, 87], 'natura-122120': [10990, 87],
-  'natura-70389': [5690, 145], 'natura-189401': [8390, 163],
-  'natura-204118': [530, 26], 'natura-267136': [11090, 119],
-  'avon-201699': [8590, 20], 'avon-268709': [11590, 120],
-  'casa-estilo-158307': [11990, 17], 'casa-estilo-172906': [4790, 13],
-  'ciclo-14-268709': [0, 23], 'ciclo-14-160310': [540, 28],
+  'natura-69825': [17990, 149], 'natura-189406': [8390, 169],
+  'natura-148176': [7990, 125], 'natura-74852': [10990, 161],
+  'natura-148411': [6390, 114], 'natura-2179': [0, 172],
+  'avon-152799': [13490, 55], 'avon-127151': [1990, 112],
+  'avon-245294': [4690, 5], 'avon-135619': [4590, 27],
+  'casa-estilo-158449': [10990, 15], 'casa-estilo-171043': [5990, 6],
+  'casa-estilo-187322': [9190, 3],
 };
 for (const [id, sample] of Object.entries(expected)) {
   const p = products.find(p => p.id === id);
   assert.deepEqual([p?.price, p?.page], sample, `PDF regression: ${id}`);
 }
-const files = {'Natura c14.pdf':'natura-c14.pdf', 'Avon c14.pdf':'avon-c14.pdf', 'Casa y Estilo c14.pdf':'casa-estilo-c14.pdf', 'Ciclo_14.pdf':'ciclo-14.pdf'};
+const files = {'Natura c16.pdf':'natura-c16.pdf', 'Avon c16.pdf':'avon-c16.pdf', 'Casa y Estilo c16.pdf':'casa-estilo-c16.pdf'};
 const pdfChecks = JSON.parse(fs.readFileSync('docs/pdf-source-checks.json', 'utf8'));
 for (const [input, published] of Object.entries(files)) {
   if (fs.existsSync(`inputs/${input}`)) {
