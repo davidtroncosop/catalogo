@@ -30,26 +30,28 @@ for (const p of products) {
 }
 for (const [slug, entry] of Object.entries(audit.catalogs)) {
   const selected = products.filter(p => p.catalogSlug === slug);
-  assert.equal(selected.length, entry.pdfCodes);
-  assert.deepEqual(entry.missingCodes, []);
+  assert.equal(selected.length, entry.spreadsheetCodes);
+  // Every code printed in the PDF must be sold; codes only in the spreadsheet are reported.
+  assert.deepEqual(entry.pdfOnlyCodes, [], `PDF codes missing from catalogue: ${slug}`);
+  assert.deepEqual(entry.priceNotOnPage, [], `Price not printed on source page: ${slug}`);
   assert.deepEqual(selected.map(p => p.id).sort(), audit.rows.filter(r => r.id.startsWith(`${slug}-`)).map(r => r.id).sort());
 }
-// Independent, manually read examples protect against wrong shade pricing,
-// conditional multi-buy prices (natura-2179 is a 3x2 offer) and teaser pages.
+for (const p of products.filter(p => !p.inStock)) assert.equal(p.badge, 'Sin stock', `Out of stock without badge: ${p.id}`);
+// Independent, visually checked examples against the C17 PDFs: spreadsheet errors
+// (avon-161762 copied a kit price), PDF-only codes, hidden PDF layers (172907).
 const expected = {
-  'natura-69825': [17990, 149], 'natura-189406': [8390, 169],
-  'natura-148176': [7990, 125], 'natura-74852': [10990, 161],
-  'natura-148411': [6390, 114], 'natura-2179': [0, 172],
-  'avon-152799': [13490, 55], 'avon-127151': [1990, 112],
-  'avon-245294': [4690, 5], 'avon-135619': [4590, 27],
-  'casa-estilo-158449': [10990, 15], 'casa-estilo-171043': [5990, 6],
-  'casa-estilo-187322': [9190, 3],
+  'natura-200641': [9790, 133], 'natura-200645': [7890, 133],
+  'natura-280353': [27890, 173], 'avon-184840': [3390, 44],
+  'avon-245293': [6290, 36], 'avon-161762': [9990, 27],
+  'avon-279655': [8290, 21], 'avon-199158': [5990, 14],
+  'casa-estilo-170669': [12990, 13], 'casa-estilo-172907': [2990, 12],
+  'casa-estilo-171045': [10990, 5],
 };
 for (const [id, sample] of Object.entries(expected)) {
   const p = products.find(p => p.id === id);
   assert.deepEqual([p?.price, p?.page], sample, `PDF regression: ${id}`);
 }
-const files = {'Natura c16.pdf':'natura-c16.pdf', 'Avon c16.pdf':'avon-c16.pdf', 'Casa y Estilo c16.pdf':'casa-estilo-c16.pdf'};
+const files = {'c17/Natura c17.pdf':'natura-c17.pdf', 'c17/Avon c17.pdf':'avon-c17.pdf', 'c17/Outlet Casa y Estilo c17.pdf':'casa-estilo-c17.pdf'};
 const pdfChecks = JSON.parse(fs.readFileSync('docs/pdf-source-checks.json', 'utf8'));
 for (const [input, published] of Object.entries(files)) {
   if (fs.existsSync(`inputs/${input}`)) {

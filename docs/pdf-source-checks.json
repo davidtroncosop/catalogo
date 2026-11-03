@@ -1,29 +1,29 @@
 [
   {
-    "source": "Natura c16.pdf",
-    "copy": "natura-c16.pdf",
-    "pages": 200,
-    "rasterPages": 1,
-    "maxThumbnailDifference": 0.041,
-    "sourceSha256": "7be0f675ba69be190d464eb18aad57af5a6d59e40ae1973d1081c8a4346e1592",
-    "copySha256": "968591c0fa769edda1abc0295277974cbd2ae70556ef321fa5d1b63c3644269d"
-  },
-  {
-    "source": "Avon c16.pdf",
-    "copy": "avon-c16.pdf",
-    "pages": 166,
+    "source": "c17/Natura c17.pdf",
+    "copy": "natura-c17.pdf",
+    "pages": 214,
     "rasterPages": 0,
     "maxThumbnailDifference": 0,
-    "sourceSha256": "ae7e1cd33379a2b9f26900cd6d4567f1f9cb61532e079c0dff5360417c499466",
-    "copySha256": "135eef4e7ab50d350c18f88f9942e6a7d8242c380b16fb5b52b6801b4a98ba33"
+    "sourceSha256": "f2e51e6afc3c9b1ddf2f5b47fea0d12b1e027c5c87c994376451f54aa832c5d3",
+    "copySha256": "f2e51e6afc3c9b1ddf2f5b47fea0d12b1e027c5c87c994376451f54aa832c5d3"
   },
   {
-    "source": "Casa y Estilo c16.pdf",
-    "copy": "casa-estilo-c16.pdf",
-    "pages": 21,
+    "source": "c17/Avon c17.pdf",
+    "copy": "avon-c17.pdf",
+    "pages": 154,
     "rasterPages": 0,
     "maxThumbnailDifference": 0,
-    "sourceSha256": "6ac197545b0572fce1b125aadd8abfe93d5d4bcdbf9e0ff9ed0354aee458bd5a",
-    "copySha256": "6ac197545b0572fce1b125aadd8abfe93d5d4bcdbf9e0ff9ed0354aee458bd5a"
+    "sourceSha256": "493271b9386a349ff5dcbef348d0757d08ec54eeb675ac0530f4a785cabcb819",
+    "copySha256": "5789f080462fbe6a65ba33c91b990a0af36e58062246aa3659dd720673538409"
+  },
+  {
+    "source": "c17/Outlet Casa y Estilo c17.pdf",
+    "copy": "casa-estilo-c17.pdf",
+    "pages": 19,
+    "rasterPages": 0,
+    "maxThumbnailDifference": 0,
+    "sourceSha256": "5acea35f652500e9c11a15361150f5ad4b2cce13e4ad6284ca18d2776c66115f",
+    "copySha256": "610faaede4370dd8fa978d92164fa08ee8a7ecc3aaf9301834044f13524cf3dd"
   }
 ]

@@ -36,6 +36,7 @@
 .beauty-product-photo .bg-black { background:var(--beauty-accent); border-radius:3px; }
 .beauty-product .w-full.bg-black { background:var(--beauty-accent); border-radius:3px; min-height:42px; }
 .beauty-product .w-full.bg-black:hover { background:#951c43; }
+.beauty-product .w-full.bg-black:disabled { background:#e7e2df; color:#6b6461; cursor:not-allowed; }
 .beauty-product .prices { flex-wrap:wrap; }
 .beauty-store footer { background:#39232d; }
 .beauty-store :focus-visible { outline:2px solid var(--beauty-accent); outline-offset:3px; }

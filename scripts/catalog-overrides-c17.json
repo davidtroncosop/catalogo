@@ -1,0 +1,32 @@
+{
+  "_comment": "Correcciones al Excel C17 verificadas visualmente contra los PDF del ciclo. 'corrections' cambia filas del Excel; 'additions' agrega códigos impresos con precio en el PDF que no vienen en el Excel.",
+  "corrections": {
+    "casa-estilo-172907": {
+      "Página(s)": "12",
+      "_why": "El anillo para yoga se ve solo en la pág. 12 ($2.990, regular $4.990). En la pág. 13 su código está en una capa oculta del PDF y la página muestra la pesa rusa."
+    },
+    "avon-161762": {
+      "Precio final": 9990,
+      "Precio normal": 13990,
+      "_why": "El Excel repite el precio del kit 279655 (8.290 / 14.380). Revista Avon C17 pág. 27: $9.990, precio regular $13.990."
+    }
+  },
+  "additions": [
+    {
+      "Revista": "Natura", "Código": "200645", "Producto": "Máscara Nutrición De Nanoprecisión Repuesto",
+      "Categoría": "Cabello", "Precio normal": 7890, "Precio final": 7890, "Página(s)": "133",
+      "Descripción": "Natura Lumina, sistema de tratamiento Nutrición de Nanoprecisión para cabellos secos u opacos. Repuesto de la máscara.",
+      "_why": "Revista Natura C17 pág. 133: Repuesto (200645) $7.890, junto a la máscara 200641."
+    },
+    {
+      "Revista": "Avon", "Código": "184840", "Producto": "Color Trend Delineador Líquido Para Ojos",
+      "Categoría": "Maquillaje", "Precio normal": 4390, "Precio final": 3390, "Página(s)": "44",
+      "_why": "Revista Avon C17 pág. 44: tono Rosa Verano (184840), mismo precio que los demás tonos ($3.390, regular $4.390)."
+    },
+    {
+      "Revista": "Avon", "Código": "245293", "Producto": "Power Stay Delineador Labial Retráctil — Vermelho Mais Quente",
+      "Categoría": "Maquillaje", "Precio normal": 7790, "Precio final": 6290, "Página(s)": "36",
+      "_why": "Revista Avon C17 pág. 36: tono Vermelho Mais Quente (245293), $6.290, precio regular $7.790."
+    }
+  ]
+}

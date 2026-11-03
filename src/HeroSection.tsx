@@ -19,7 +19,7 @@ export function HeroSection({ productCount, onExploreCatalog, onMakeup, onOpenCa
           <button className="beauty-button" onClick={onExploreCatalog}>Descubrir productos <ArrowUpRight size={18} /></button>
           <button className="beauty-text-button" onClick={onOpenCatalogs}><BookOpen size={16} /> Ver revistas</button>
         </div>
-        <div className="beauty-hero-note"><strong>{productCount.toLocaleString('es-CL')}</strong> productos y variantes <span>·</span> Ciclo 16 / 2026</div>
+        <div className="beauty-hero-note"><strong>{productCount.toLocaleString('es-CL')}</strong> productos y variantes <span>·</span> Ciclo 17 / 2026</div>
       </div>
       <div className="beauty-hero-photo">
         <img src="https://www.avon.cl/cdn/shop/collections/avon.cl_favorito-labios-80.jpg?v=1781112849" alt="Maquillaje Avon: labios luminosos y un acabado natural" fetchPriority="high" width="820" height="1092" />

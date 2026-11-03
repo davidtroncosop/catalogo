@@ -9,10 +9,11 @@ import pymupdf
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'tmp' / 'catalog-audit'
 OUT.mkdir(parents=True, exist_ok=True)
+CYCLE = 17
 CATALOGS = {
-    'natura': 'Natura c16.pdf',
-    'avon': 'Avon c16.pdf',
-    'casa-estilo': 'Casa y Estilo c16.pdf',
+    'natura': f'c{CYCLE}/Natura c{CYCLE}.pdf',
+    'avon': f'c{CYCLE}/Avon c{CYCLE}.pdf',
+    'casa-estilo': f'c{CYCLE}/Outlet Casa y Estilo c{CYCLE}.pdf',
 }
 
 catalog_json = ROOT / 'src' / 'data' / 'catalog.json'
