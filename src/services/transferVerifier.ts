@@ -26,14 +26,14 @@ export interface TransferVerificationResult {
 
 export const DEFAULT_BANK_DETAILS: BankDetails = {
   bank: 'Banco Santander',
-  accountType: 'Cuenta Vista',
-  accountNumber: '0 011 00 08554 9',
-  holderName: 'Camila Josefa Browne Arellano',
-  rut: '18.663.744-5',
+  accountType: 'Cuenta Corriente',
+  accountNumber: '0101389324',
+  holderName: 'Monica Arellano',
+  rut: '6.577.254-K',
   email: 'cjbrowne@miuandes.cl',
 };
 
-const BANK_STORAGE_KEY = 'camila_browne_bank_details_v3';
+const BANK_STORAGE_KEY = 'camila_browne_bank_details_v4';
 const API_KEY_STORAGE_KEY = 'camila_browne_gemini_key';
 
 export function getBankDetails(): BankDetails {
@@ -152,7 +152,7 @@ export async function verifyTransferReceipt({
 Eres un auditor experto en validar comprobantes de transferencias bancarias en Chile (Banco Santander, BancoEstado, Banco de Chile, BCI, Scotiabank, Itaú, Falabella, Mach, Tenpo, etc.).
 
 Examina detenidamente la imagen adjunta de este pantallazo o comprobante de transferencia y verifica los siguientes datos esperados:
-- Destinatario esperado: "${bankDetails.holderName}" (RUT: "${bankDetails.rut}", Cuenta: "${bankDetails.accountNumber}"). Se considera recipientValid = true si coincide el nombre (o parte reconocible como Camila Browne, Camila Josefa Browne Arellano) o el RUT ${bankDetails.rut}.
+- Destinatario esperado: "${bankDetails.holderName}" (RUT: "${bankDetails.rut}", Cuenta: "${bankDetails.accountNumber}"). Se considera recipientValid = true si coincide el nombre (o parte reconocible como Monica Arellano) o el RUT ${bankDetails.rut}.
 - Monto esperado del pedido: $${expectedAmount.toLocaleString('es-CL')} CLP (valor numérico: ${expectedAmount})
 - Fecha esperada: Hoy es ${todayStr} (se aceptan transferencias realizadas hoy o en las últimas 48 horas).
 
@@ -349,9 +349,9 @@ function analyzeReceiptWithHeuristics(
         transactionId: sample.folio,
         confidence: isValid ? 98 : 85,
         analysisNotes: isValid
-          ? `Comprobante verificado con éxito. Destinatario ${sample.recipient} coincide con Camila Browne y el monto de $${sample.amount.toLocaleString('es-CL')} cubre los $${expectedAmount.toLocaleString('es-CL')} del pedido.`
+          ? `Comprobante verificado con éxito. Destinatario ${sample.recipient} coincide con ${bankDetails.holderName} y el monto de $${sample.amount.toLocaleString('es-CL')} cubre los $${expectedAmount.toLocaleString('es-CL')} del pedido.`
           : !isRecipientMatch
-          ? `El destinatario detectado (${sample.recipient}) no coincide con Camila Browne (${bankDetails.holderName}).`
+          ? `El destinatario detectado (${sample.recipient}) no coincide con el titular (${bankDetails.holderName}).`
           : `El monto detectado ($${sample.amount.toLocaleString('es-CL')}) no cubre el total del pedido ($${expectedAmount.toLocaleString('es-CL')}).`,
         modelUsed: 'Motor de Verificación Inteligente (Análisis Estructurado)',
       };
@@ -384,7 +384,7 @@ function analyzeReceiptWithHeuristics(
 export function generateSampleReceiptImage(
   type: 'valid' | 'wrong-amount' | 'wrong-recipient',
   expectedAmount: number,
-  recipientName = 'Camila Josefa Browne Arellano'
+  recipientName = 'Monica Arellano'
 ): string {
   if (typeof document === 'undefined') return '';
 
@@ -489,10 +489,10 @@ export function generateSampleReceiptImage(
   };
 
   drawRow('Destinatario', recipient, true);
-  drawRow('RUT', type === 'wrong-recipient' ? '12.345.678-9' : '18.663.744-5');
+  drawRow('RUT', type === 'wrong-recipient' ? '12.345.678-9' : '6.577.254-K');
   drawRow('Banco destino', 'Banco Santander');
-  drawRow('Tipo de cuenta', 'Cuenta Vista');
-  drawRow('N° de cuenta', '0 011 00 08554 9');
+  drawRow('Tipo de cuenta', 'Cuenta Corriente');
+  drawRow('N° de cuenta', '0101389324');
   drawRow('Fecha y hora', `${dateFormatted} ${timeFormatted} hrs`);
   drawRow('N° de operación', folio);
 
