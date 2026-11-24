@@ -16,7 +16,7 @@ evidence = json.loads((WORK / 'evidence.json').read_text())
 official = json.loads((WORK / 'official.json').read_text())
 existing = json.loads((WORK / 'existing.json').read_text())
 existing_by_id = {f'{p["catalogSlug"]}-{p["code"]}': p for p in existing}
-CYCLE = 16
+CYCLE = 18
 # Manual corrections are tied to one campaign's pages and prices. Files are
 # named per cycle so a new campaign never inherits another cycle's prices.
 overrides_file = ROOT / 'scripts' / f'catalog-overrides-c{CYCLE}.json'
@@ -25,7 +25,7 @@ rules_file = ROOT / 'scripts' / f'catalog-reviewed-rules-c{CYCLE}.py'
 reviewed_rules = runpy.run_path(str(rules_file))['RULES'] if rules_file.exists() else []
 consultancy_names = {}
 BRANDS = {'natura': 'Natura', 'avon': 'Avon', 'casa-estilo': 'Casa & Estilo'}
-TITLES = {'natura': f'Revista Natura C{CYCLE}', 'avon': f'Revista Avon C{CYCLE}', 'casa-estilo': f'Casa y Estilo C{CYCLE}'}
+TITLES = {'natura': f'Revista Natura C{CYCLE}', 'avon': f'Revista Avon C{CYCLE}', 'casa-estilo': f'Outlet Casa y Estilo C{CYCLE}'}
 
 
 def clean(s):
@@ -46,12 +46,21 @@ def category(slug, page, name):
     if re.search(r'eau de|\bedp\b|\bedt\b|perfume|colonia|perfumeria|body splash|frescor', n): return 'Perfumería'
     if re.search(r'home spray|difusor|vela|botella|bolsa|mochila|plato|cocina|taza|organizador|huerto|neceser|cuaderno|lonchera|cartuchera', n): return 'Hogar & Cocina'
     if slug == 'natura':
-        # Section page ranges of Natura C16.
-        if 16 <= page <= 49: return 'Perfumería'
-        if 58 <= page <= 81: return 'Cuidado Facial'
-        if 82 <= page <= 100: return 'Maquillaje'
-        if 101 <= page <= 137: return 'Cabello'
-        if page >= 192: return 'Hogar & Cocina'
+        # Section page ranges of Natura C18.
+        if 5 <= page <= 49: return 'Kits & Ofertas'
+        if 57 <= page <= 83: return 'Perfumería'
+        if 84 <= page <= 97: return 'Cuidado Facial'
+        if 98 <= page <= 120: return 'Maquillaje'
+        if 121 <= page <= 152: return 'Cabello'
+        if page >= 196: return 'Hogar & Cocina'
+    if slug == 'avon':
+        # Section page ranges of Avon C18.
+        if 6 <= page <= 23: return 'Kits & Ofertas'
+        if 24 <= page <= 55: return 'Maquillaje'
+        if 56 <= page <= 83: return 'Perfumería'
+        if 84 <= page <= 107: return 'Cuidado Facial'
+        if 128 <= page <= 131: return 'Cabello'
+        if 132 <= page <= 145: return 'Hogar & Cocina'
     return 'Cuerpo & Baño'
 
 
@@ -83,14 +92,14 @@ def prices_on(page):
     result = []
     for line in page['lines']:
         text = line['text']
-        if re.search(r'\bx\s*\d|\d\s*ml|\d\s*g\b', text, re.I): continue  # unit prices
+        if re.search(r'\bx\s*\d|\d\s*ml|\d\s*g\b|precio\s+x\b|\bx\s*(?:g|ml)\b', text, re.I): continue  # unit prices
         if re.search(r'ahorra', text, re.I): continue  # savings amounts, not prices
         for match in re.finditer(r'(?<!\d)(\d{1,3}(?:\.\d{3})+)(?!\d)', text):
             if not ('$' in text or re.fullmatch(r'(?:a\s*)?\d[\d.]*', text)):
                 continue
             amount = int(match[1].replace('.', ''))
             if amount < 500 or amount > 200000: continue
-            result.append({**line, 'amount': amount, 'original': bool(re.search(r'\bde\s*\$|/\s*\d+\s*pts', text))})
+            result.append({**line, 'amount': amount, 'original': bool(re.search(r'\bde\s*\$|/\s*\d+\s*pts|precio\s+regular', text, re.I))})
     return result
 
 
@@ -127,6 +136,44 @@ def price_for(page, code):
     return chosen['amount'] if confident else 0, original if confident else 0, 'catalog' if confident else 'consult', [p['amount'] for p in ranked[:4]]
 
 
+STOP = set('de del la las el los y e para con en a al un una sin por x c u cada uno ml g mg pts natura avon precio regular'.split())
+
+
+def tokens(text):
+    return {t for t in re.findall(r'[a-z0-9]+', norm(text)) if t not in STOP and len(t) > 1}
+
+
+def name_price(page, code, name):
+    """Second pass for shade grids: pick the price block whose printed product
+    name (the lines above the amount) matches this SKU's official name.
+
+    Only used when the layout pass is not confident. A block is accepted when
+    it is the single best match and shares at least two words with the name;
+    refills only match refill blocks, and multi-buy amounts are never used."""
+    family = tokens(name.split(' — ')[0])
+    if len(family) < 2: return None
+    refill = 'repuesto' in family
+    scored = []
+    for v in prices_on(page):
+        if v['original']: continue
+        x, y = v['bbox'][:2]
+        ctx = [l['text'] for l in page['lines'] if abs(l['bbox'][0] - x) < 12 and 0 < y - l['bbox'][1] < 60
+               and not re.search(r'\$', l['text'])]
+        text = ' '.join(ctx)
+        if re.search(r'llevando\s*[2-9]|si llevas|\d+\s*unidades\b(?! de)|\b\d\s*[x×]\s*\d\b|2x1|compra\s+\d', text, re.I): continue
+        words = tokens(text)
+        if ('repuesto' in words) != refill: continue
+        scored.append((len(family & words), v))
+    if not scored: return None
+    scored.sort(key=lambda t: -t[0])
+    best, chosen = scored[0]
+    if best < max(2, len(family) / 2) or any(sc == best and v['amount'] != chosen['amount'] for sc, v in scored[1:]): return None
+    originals = [v for v in prices_on(page) if v['original'] and v['amount'] >= chosen['amount']
+                 and abs(v['bbox'][1] - chosen['bbox'][1]) < 65 and abs(v['bbox'][0] - chosen['bbox'][0]) < 60]
+    originals.sort(key=lambda v: abs(v['bbox'][1] - chosen['bbox'][1]) + 3 * abs(v['bbox'][0] - chosen['bbox'][0]))
+    return chosen['amount'], originals[0]['amount'] if originals else chosen['amount']
+
+
 products = []
 audit_rows = []
 for slug, catalog in evidence.items():
@@ -147,9 +194,15 @@ for slug, catalog in evidence.items():
         variant = clean(metadata.get('variant'))
         if variant and norm(variant) not in norm(name): name += f' — {variant}'
         price, original, status, candidates = price_for(page, code)
+        matched_by_name = False
+        if status == 'consult':
+            by_name = name_price(page, code, name)
+            if by_name:
+                price, original = by_name
+                status, matched_by_name = 'catalog', True
         for rule_slug, rule_page, pattern, family, sale, list_price in reviewed_rules:
             if rule_slug == slug and page['page'] == rule_page and re.match(pattern, code):
-                price, original, status = sale, list_price, 'catalog'
+                price, original, status, matched_by_name = sale, list_price, 'catalog', False
                 if not metadata.get('name') and not family.startswith('Código'):
                     tone_match = re.search(r'([^\n]+)\n\s*\(\s*' + code + r'\s*\)', page['text'])
                     tone = clean(tone_match[1]) if tone_match else ''
@@ -190,7 +243,7 @@ for slug, catalog in evidence.items():
                            'priceStatus': p['priceStatus'], 'candidates': candidates,
                            'imageSource': p['imageSource'], 'officialName': bool(metadata.get('name')),
                            'priceProvenance': 'consultancy-conditions' if p['priceStatus'] == 'consult' else
-                            'reviewed-pdf' if 'price' in override or any(r[0] == slug and page['page'] == r[1] and re.match(r[2], code) for r in reviewed_rules) else 'pdf-layout'})
+                            'pdf-name-match' if matched_by_name and 'price' not in override else 'reviewed-pdf' if 'price' in override or any(r[0] == slug and page['page'] == r[1] and re.match(r[2], code) for r in reviewed_rules) else 'pdf-layout'})
 
 # Stable magazine order makes discovery predictable, including variants.
 products.sort(key=lambda p: (list(BRANDS).index(p['catalogSlug']), p['page'], p['name'], p['code']))

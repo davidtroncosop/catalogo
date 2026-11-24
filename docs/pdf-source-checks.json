@@ -1,29 +1,29 @@
 [
   {
-    "source": "c17/Natura c17.pdf",
-    "copy": "natura-c17.pdf",
-    "pages": 214,
+    "source": "c18/Natura c18.pdf",
+    "copy": "natura-c18.pdf",
+    "pages": 204,
     "rasterPages": 0,
     "maxThumbnailDifference": 0,
-    "sourceSha256": "f2e51e6afc3c9b1ddf2f5b47fea0d12b1e027c5c87c994376451f54aa832c5d3",
-    "copySha256": "f2e51e6afc3c9b1ddf2f5b47fea0d12b1e027c5c87c994376451f54aa832c5d3"
+    "sourceSha256": "2d1aae5e025badf7d90e5e0e5d598ce232338f68b5571de02c23d23e3ff7d445",
+    "copySha256": "2d1aae5e025badf7d90e5e0e5d598ce232338f68b5571de02c23d23e3ff7d445"
   },
   {
-    "source": "c17/Avon c17.pdf",
-    "copy": "avon-c17.pdf",
-    "pages": 154,
+    "source": "c18/Avon c18.pdf",
+    "copy": "avon-c18.pdf",
+    "pages": 173,
     "rasterPages": 0,
     "maxThumbnailDifference": 0,
-    "sourceSha256": "493271b9386a349ff5dcbef348d0757d08ec54eeb675ac0530f4a785cabcb819",
-    "copySha256": "5789f080462fbe6a65ba33c91b990a0af36e58062246aa3659dd720673538409"
+    "sourceSha256": "5968ec13ca8f9783ffc45afc274ecefe286829af0e7ebdc616678b12242c7c03",
+    "copySha256": "35e26a991ab41d20e3be724e1b4850fd1d06b031e6950db896dfbd5de573c422"
   },
   {
-    "source": "c17/Outlet Casa y Estilo c17.pdf",
-    "copy": "casa-estilo-c17.pdf",
-    "pages": 19,
+    "source": "c18/Outlet Casa y Estilo c18.pdf",
+    "copy": "casa-estilo-c18.pdf",
+    "pages": 17,
     "rasterPages": 0,
     "maxThumbnailDifference": 0,
-    "sourceSha256": "5acea35f652500e9c11a15361150f5ad4b2cce13e4ad6284ca18d2776c66115f",
-    "copySha256": "610faaede4370dd8fa978d92164fa08ee8a7ecc3aaf9301834044f13524cf3dd"
+    "sourceSha256": "4862117f6ab98efbc03b4285e1991236c3be6f5bfe31802da6291e10748980fe",
+    "copySha256": "4862117f6ab98efbc03b4285e1991236c3be6f5bfe31802da6291e10748980fe"
   }
 ]

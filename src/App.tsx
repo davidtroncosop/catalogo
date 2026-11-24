@@ -55,80 +55,82 @@ const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u03
 // --- CATALOG DATA ---
 const CATALOGS: CatalogItem[] = [
   {
-    id: 'natura-c17',
+    id: 'natura-c18',
     slug: 'natura',
     title: 'Revista Interactiva Natura',
-    subtitle: 'Ciclo 17 / 2026 Chile',
+    subtitle: 'Ciclo 18 / 2026 Chile',
     brand: 'Natura',
-    campaign: 'Ciclo 17 / 2026',
-    totalPages: 214,
-    coverImage: '/covers/natura-c17.jpg',
-    pdfUrl: '/pdf/natura-c17.pdf',
-    badge: 'Hasta 41% OFF',
+    campaign: 'Ciclo 18 / 2026',
+    totalPages: 204,
+    coverImage: '/covers/natura-c18.jpg',
+    pdfUrl: '/pdf/natura-c18.pdf',
+    badge: 'Hasta 45% OFF',
     badgeColor: 'bg-black text-white',
     description:
-      'Hace bien sentir la vida con más Humor: regalos de Navidad edición limitada, kit Tododia Piel Uniforme, Chronos Derma y el nuevo Lumina Nutrición de Nanoprecisión.',
+      'Navidad Natura: regalos edición limitada con hasta 45% de descuento, los nuevos Ekos Frescores, Tododia mango rosa y agua de coco y promociones imperdibles en maquillaje.',
     tagline: 'hace bien estar bien',
     sections: [
       { title: 'Imperdibles del Ciclo', startPage: 2 },
-      { title: 'Regalos Edición Limitada', startPage: 20 },
-      { title: 'Perfumería', startPage: 49 },
-      { title: 'Natura Homem', startPage: 75 },
-      { title: 'Rostro & Chronos', startPage: 79 },
-      { title: 'Maquillaje Una & Faces', startPage: 97 },
-      { title: 'Cabello & Lumina', startPage: 133 },
-      { title: 'Tododia & Cuerpo', startPage: 159 },
-      { title: 'Creer para Ver & Casa', startPage: 194 },
+      { title: 'Regalos de Navidad', startPage: 5 },
+      { title: 'Promociones Imperdibles', startPage: 50 },
+      { title: 'Perfumería', startPage: 57 },
+      { title: 'Rostro & Chronos', startPage: 84 },
+      { title: 'Maquillaje Una & Faces', startPage: 98 },
+      { title: 'Cabello & Lumina', startPage: 121 },
+      { title: 'Tododia & Cuerpo', startPage: 153 },
+      { title: 'Cuidados para la Casa', startPage: 187 },
     ],
   },
   {
-    id: 'avon-c17',
+    id: 'avon-c18',
     slug: 'avon',
     title: 'Revista Digital Avon',
-    subtitle: 'Ciclo 17 / 2026 Chile',
+    subtitle: 'Ciclo 18 / 2026 Chile',
     brand: 'Avon',
-    campaign: 'Ciclo 17 / 2026',
-    totalPages: 154,
-    coverImage: '/covers/avon-c17.jpg',
-    pdfUrl: '/pdf/avon-c17.pdf',
+    campaign: 'Ciclo 18 / 2026',
+    totalPages: 173,
+    coverImage: '/covers/avon-c18.jpg',
+    pdfUrl: '/pdf/avon-c18.pdf',
     badge: 'Hasta 60% OFF',
     badgeColor: 'bg-black text-white',
     description:
-      'Tu primer sérum labial Avon con péptidos, kits de regalo con bolsa gratis, protectores solares Anew y mega ofertas en perfumería y cuidado diario.',
-    tagline: 'maquillaje con tratamiento',
+      'Una Navidad muy Power: el nuevo perfume Power Stay, kits de regalo con hasta 50% OFF, la colección edición limitada Alicia y mega ofertas en maquillaje y cuidado diario.',
+    tagline: 'una Navidad muy Power',
     sections: [
       { title: 'Imperdibles del Ciclo', startPage: 2 },
-      { title: 'Maquillaje', startPage: 11 },
-      { title: 'Kits de Regalo', startPage: 18 },
-      { title: 'Perfumería', startPage: 52 },
-      { title: 'Cuidado Facial Anew', startPage: 78 },
-      { title: 'Cuidados Diarios & Solar', startPage: 102 },
-      { title: 'Cabello', startPage: 119 },
-      { title: 'Bienestar & Casa', startPage: 126 },
-      { title: 'Niñez & Estilo', startPage: 136 },
-      { title: 'Mega Ofertas', startPage: 150 },
+      { title: 'Kits de Regalo', startPage: 6 },
+      { title: 'Maquillaje', startPage: 24 },
+      { title: 'Perfumería', startPage: 56 },
+      { title: 'Cuidado Facial Anew', startPage: 84 },
+      { title: 'Cuidados Diarios & Solar', startPage: 108 },
+      { title: 'Cabello', startPage: 128 },
+      { title: 'Bienestar & Casa', startPage: 132 },
+      { title: 'Estilo', startPage: 140 },
+      { title: 'Niñez', startPage: 146 },
+      { title: 'Mega Ofertas', startPage: 159 },
     ],
   },
   {
-    id: 'casa-estilo-c17',
+    id: 'casa-estilo-c18',
     slug: 'casa-estilo',
     title: 'Casa y Estilo Outlet',
-    subtitle: 'Ciclo 17 / 2026 Chile',
+    subtitle: 'Ciclo 18 / 2026 Chile',
     brand: 'Casa & Estilo',
-    campaign: 'Ciclo 17 / 2026',
-    totalPages: 19,
-    coverImage: '/covers/casa-estilo-c17.jpg',
-    pdfUrl: '/pdf/casa-estilo-c17.pdf',
-    badge: 'Hasta 60% OFF',
+    campaign: 'Ciclo 18 / 2026',
+    totalPages: 17,
+    coverImage: '/covers/casa-estilo-c18.jpg',
+    pdfUrl: '/pdf/casa-estilo-c18.pdf',
+    badge: 'Hasta 55% OFF',
     badgeColor: 'bg-black text-white',
     description:
-      'Outlet hasta agotar stock: juguetes y pijamas para niños, fitness y bienestar, y accesorios para la mesa y el hogar con hasta 60% de descuento.',
-    tagline: '¡Los mejores productos a precios únicos!',
+      'Nueva colección Coca-Cola para reunir a todos, favoritos para la mesa y la cocina, toallas y bienestar con hasta 55% de descuento, hasta agotar stock.',
+    tagline: '¡Disfruta lo mejor de la vida ahora!',
     sections: [
-      { title: 'Imperdibles del Ciclo', startPage: 2 },
-      { title: 'Niñez & Juguetes', startPage: 4 },
-      { title: 'Fitness & Bienestar', startPage: 12 },
-      { title: 'Casa & Organización', startPage: 15 },
+      { title: 'Nueva Colección', startPage: 2 },
+      { title: 'Favoritos del Ciclo', startPage: 7 },
+      { title: 'Casa & Mesa', startPage: 8 },
+      { title: 'Cocina', startPage: 12 },
+      { title: 'Fitness & Bienestar', startPage: 15 },
     ],
   },
 ];
@@ -313,11 +315,11 @@ export default function App() {
     setCouponError('');
     setCouponSuccess('');
     const code = couponCode.trim().toUpperCase();
-    if (code === 'CICLO17' || code === 'NATURA10' || code === 'AVON10') {
+    if (code === 'CICLO18' || code === 'NATURA10' || code === 'AVON10') {
       setAppliedDiscount(0.1);
       setCouponSuccess('¡Cupón aplicado! 10% de descuento adicional');
     } else {
-      setCouponError('Cupón inválido. Prueba con: CICLO17');
+      setCouponError('Cupón inválido. Prueba con: CICLO18');
     }
   };
 
@@ -786,7 +788,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-[11px] text-black/50 font-normal tracking-wide mt-0.5">
-                Natura & Avon · Ciclo 17 Chile
+                Natura & Avon · Ciclo 18 Chile
               </p>
             </div>
           </div>
@@ -1130,7 +1132,7 @@ export default function App() {
                   <option value="discount">Mayor Descuento (%)</option>
                   <option value="name-asc">Nombre: A - Z</option>
                   <option value="name-desc">Nombre: Z - A</option>
-                  <option value="page-asc">Página de Revista (1-194)</option>
+                  <option value="page-asc">Página de Revista</option>
                 </select>
               </div>
 
@@ -1541,7 +1543,7 @@ export default function App() {
                 Catálogos Digitales Oficiales
               </span>
               <h2 className="text-3xl font-black text-black tracking-tight mt-0.5">
-                Revistas Interactivas Ciclo 17 / 2026 Chile
+                Revistas Interactivas Ciclo 18 / 2026 Chile
               </h2>
               <p className="text-sm text-black/50 mt-1">
                 Hojea todas las páginas en alta definición. Haz clic en cualquier portada para abrir el visor interactivo.
@@ -1789,7 +1791,7 @@ export default function App() {
                   <div className="text-5xl mb-3">🛒</div>
                   <h4 className="font-extrabold text-stone-800 text-base">Tu carrito está vacío</h4>
                   <p className="text-xs text-black/50 max-w-xs mx-auto mt-1 mb-5">
-                    Explora nuestra tienda o revistas digitales para encontrar los mejores productos y ofertas del Ciclo 17.
+                    Explora nuestra tienda o revistas digitales para encontrar los mejores productos y ofertas del Ciclo 18.
                   </p>
                   <button
                     onClick={() => setIsCartOpen(false)}
@@ -1866,7 +1868,7 @@ export default function App() {
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Cupón (ej: CICLO17)"
+                    placeholder="Cupón (ej: CICLO18)"
                     className="flex-1 px-3.5 py-1.5 bg-white border border-black/15 rounded-full text-xs font-mono uppercase focus:outline-none focus:ring-1 focus:ring-black"
                   />
                   <button
@@ -2544,7 +2546,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-white/60 leading-relaxed text-xs">
-                Catálogo oficial de Camila Browne con {PRODUCTS.length.toLocaleString('es-CL')} productos y variantes del Ciclo 17 / 2026. Natura Cosméticos, Avon y Casa & Estilo.
+                Catálogo oficial de Camila Browne con {PRODUCTS.length.toLocaleString('es-CL')} productos y variantes del Ciclo 18 / 2026. Natura Cosméticos, Avon y Casa & Estilo.
               </p>
             </div>
 

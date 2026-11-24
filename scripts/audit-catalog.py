@@ -9,7 +9,7 @@ import pymupdf
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'tmp' / 'catalog-audit'
 OUT.mkdir(parents=True, exist_ok=True)
-CYCLE = 17
+CYCLE = 18
 CATALOGS = {
     'natura': f'c{CYCLE}/Natura c{CYCLE}.pdf',
     'avon': f'c{CYCLE}/Avon c{CYCLE}.pdf',

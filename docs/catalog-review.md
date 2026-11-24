@@ -1,41 +1,46 @@
-# Revisión de catálogos C17
+# Revisión de catálogos C18
 
-Fuentes del ciclo 17/2026 (en `inputs/c17/`, fuera del repositorio):
+Fuentes del ciclo 18/2026 (en `inputs/c18/`, fuera del repositorio), descargadas de las revistas digitales oficiales que compartió la consultora el 23/11/2026:
 
-- `Catalogos_Natura_Avon_Ciclo17.xlsx`: nombres, precios, categorías, promociones, stock y descripciones.
-- `Natura c17.pdf` (descargado de la revista digital oficial), `Avon c17.pdf` y `Outlet Casa y Estilo c17.pdf`: páginas, tonos y verificación de precios.
+- `Natura c18.pdf` (cl.natura.digital-catalogue.com, revista «Ciclo 18»)
+- `Avon c18.pdf` (cl.natura-avon.digital-catalogue.com, revista «avon»)
+- `Outlet Casa y Estilo c18.pdf` (cl.natura-avon.digital-catalogue.com, revista «outlet-casa-estilo»)
 
-| Revista | Páginas | Productos | Fotos oficiales | Sin stock | Con promoción |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Natura | 214 | 875 | 856 | 7 | 7 |
-| Avon | 154 | 615 | 255 | 0 | 9 |
-| Casa y Estilo Outlet | 19 | 22 | 0 | 0 | 0 |
-| **Total** | **387** | **1.512** | **1.111** | **7** | **16** |
+Este ciclo no hay Excel: nombres, precios y páginas salen de los PDF, como en el C16 (`scripts/build-catalog.py`).
+
+| Revista | Páginas | Productos | Fotos oficiales |
+| --- | ---: | ---: | ---: |
+| Natura | 204 | 902 | 881 |
+| Avon | 173 | 605 | 247 |
+| Casa y Estilo Outlet | 17 | 18 | 0 |
+| **Total** | **394** | **1.525** | **1.128** |
+
+Se vende cada código impreso en los PDF y ningún otro. Todos tienen precio; no queda ninguno «a consultar».
 
 ## Precios
 
-El precio de venta es el «Precio final» del Excel y el precio tachado es el «Precio normal». Cada precio se comprobó contra el PDF: 1.508 de 1.509 filas del Excel tienen ese importe impreso en su página. Las diferencias encontradas se corrigieron en `scripts/catalog-overrides-c17.json`, cada una con la página que la justifica:
+Los precios salen siempre del PDF del ciclo, nunca del C17 ni de las tiendas web. Hay tres orígenes, registrados por fila en `catalog-audit.json` (`priceProvenance`):
 
-- `avon-161762` (Exxtravert, pág. 27): el Excel repetía el precio del kit 279655. Queda en $9.990, precio regular $13.990.
-- `casa-estilo-172907` (anillo para yoga): se muestra en la pág. 12. En la pág. 13 el código está en una capa oculta del PDF.
-- Códigos impresos con precio que faltaban en el Excel: `natura-200645` (Lumina repuesto máscara, $7.890), `avon-184840` (delineador Rosa Verano, $3.390) y `avon-245293` (Power Stay Vermelho Mais Quente, $6.290).
+- `pdf-layout` (758): el precio está junto al código en la página y no hay otro importe que compita.
+- `reviewed-pdf` (683): leídos a mano de la página en `scripts/catalog-reviewed-rules-c18.py`. Cubren las grillas de tonos, los repuestos que comparten grilla con el producto completo (bases HD, cremas Chronos, Ekos Frescor), regalos y kits con el precio en otra página (Chronos p. 41, precio en p. 40) y todas las páginas de maquillaje.
+- `pdf-name-match` (84): grillas donde el bloque de precio está rotulado con el mismo nombre que el producto. Los 84 coinciden con el precio o el precio regular del C17.
 
-`avon-199158` (máscara Make Up + Care, $5.990) viene en el Excel pero su código no está como texto en el PDF. El producto y el precio sí aparecen en la pág. 14, así que se mantiene.
+Ofertas por cantidad («llevando 2», 2x1, 3x2): el precio de la tienda es el de una unidad y el precio regular es el tachado. Por ejemplo, Kiss Hidra (2x1, p. 51) queda en $6.990 y los repuestos de jabón Tododia (p. 160) en $4.990.
 
-Las promociones por cantidad («Lleva 2 o más…», bolsa de regalo gratis) se muestran como beneficio del producto y con la insignia «Promoción». Los productos marcados «Sin stock» llevan esa insignia y no se pueden agregar al carrito.
+Control cruzado: los precios del C18 se compararon con el C17 del mismo código. Cada diferencia se revisó en la página. Las que eran errores de lectura se corrigieron con una regla; las demás son cambios reales de precio del ciclo (por ejemplo, TTA a $25.990, Imari a $13.490). Los 104 códigos nuevos sin referencia en el C17 se revisaron por muestreo (regalos de Navidad Natura y Avon, colección Alicia, Casa y Estilo).
 
 ## Nombres, categorías y fotos
 
-Los tonos que comparten nombre se distinguen con la variante oficial o con el tono impreso junto al código en el PDF. Las categorías del Excel se agrupan en las 7 de la tienda (`CATEGORIES` en `scripts/build-catalog-xlsx.py`), y los kits van a «Kits & Ofertas». Las fotos se asocian por código con Natura Chile, Avon Chile y Avon Brasil y se verifican por respuesta HTTP ([product-image-sources.json](product-image-sources.json)). Cuando no hay foto oficial, se muestra la página de la revista.
+Los nombres vienen de Natura Chile, Avon Chile o Avon Brasil por código. Si no hay ficha, se usa el nombre del C17 o el de la regla revisada. Las categorías siguen las secciones de cada revista (`category()` en `scripts/build-catalog.py`). Las fotos se verifican por respuesta HTTP ([product-image-sources.json](product-image-sources.json)); sin foto oficial se muestra la página de la revista.
 
-Las copias descargables de Avon y Casa y Estilo se recomprimieron (solo las imágenes, el texto queda intacto) para quedar bajo el límite de 25 MiB de Cloudflare Pages. La de Natura es el PDF original.
+La copia descargable de Avon se recomprimió (solo imágenes, el texto queda intacto) para quedar bajo el límite de 25 MiB de Cloudflare Pages. Las de Natura y Casa y Estilo son los PDF originales.
 
 ## Regenerar
 
 ```
-python3 scripts/render-pages.py 17
+python3 scripts/render-pages.py 18
 python3 scripts/audit-catalog.py
 node scripts/fetch-official-products.mjs && node scripts/resolve-official-images.mjs
-python3 scripts/build-catalog-xlsx.py
+python3 scripts/build-catalog.py
 python3 scripts/check-pdf-copies.py && npm run check:catalog
 ```
